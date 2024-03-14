@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "877804633592",
+    "project_id": "socail-swap",
+    "storage_bucket": "socail-swap.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877804633592:android:03883b6a60c71dcefd2a0d",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQmER2rr0I-eD0tKaUGXUMLpxT4ppJZSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877804633592:android:f061ae3c4b17d59efd2a0d",
+        "android_client_info": {
+          "package_name": "com.example.socialswap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQmER2rr0I-eD0tKaUGXUMLpxT4ppJZSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

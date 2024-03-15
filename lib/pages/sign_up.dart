@@ -1,6 +1,6 @@
 import 'package:socialswap/pages/home.dart';
 import 'package:socialswap/pages/log_in.dart';
-import 'package:socialswap/reuseable_widgets/reuseable_widgets.dart';
+import 'package:socialswap/components/reuseable_widgets.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:firebase_auth/firebase_auth.dart';

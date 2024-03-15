@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:socialswap/components/item.dart';
 import 'package:socialswap/components/item2.dart';
 import 'package:socialswap/models/coin.dart';
+import 'package:socialswap/pages/Recommendpage.dart';
 import 'package:socialswap/pages/home.dart';
 
 class MainHome extends StatefulWidget {
@@ -63,8 +64,10 @@ class _MainHomeState extends State<MainHome> {
                           borderRadius: BorderRadius.circular(3)),
                       child: GestureDetector(
                         onTap: () => {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Home()))
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Recommend()))
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 4, right: 4),

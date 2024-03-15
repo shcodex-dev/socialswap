@@ -1,5 +1,5 @@
 import 'package:socialswap/pages/sign_up.dart';
-import 'package:socialswap/reuseable_widgets/reuseable_widgets.dart';
+import 'package:socialswap/components/reuseable_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

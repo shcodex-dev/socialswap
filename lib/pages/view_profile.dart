@@ -1,11 +1,7 @@
-import 'package:socialswap/pages/chat_page.dart';
-import 'package:socialswap/pages/home.dart';
 import 'package:socialswap/pages/log_in.dart';
 import 'package:socialswap/pages/update_page.dart';
 import 'package:socialswap/service/auth.dart';
-import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ViewProfile extends StatefulWidget {

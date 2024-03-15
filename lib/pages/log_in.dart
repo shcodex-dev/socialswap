@@ -2,7 +2,7 @@
 
 import 'package:socialswap/pages/forgotpassword.dart';
 import 'package:socialswap/pages/sign_up.dart';
-import 'package:socialswap/reuseable_widgets/reuseable_widgets.dart';
+import 'package:socialswap/components/reuseable_widgets.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

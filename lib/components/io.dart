@@ -2,7 +2,9 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:socialswap/components/navBar.dart';
 import 'package:socialswap/pages/log_in.dart';
+import 'package:socialswap/service/auth.dart';
 
 class IO extends StatefulWidget {
   const IO({Key? key}) : super(key: key);
@@ -18,7 +20,26 @@ class _IOState extends State<IO> {
       Duration(seconds: 2),
       () {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LogIn()));
+          context,
+          MaterialPageRoute(
+            builder: (context) => FutureBuilder(
+              future: AuthMethods().getcurrentUser(),
+              builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  if (snapshot.hasData) {
+                    return NavBar();
+                  } else {
+                    return LogIn();
+                  }
+                }
+              },
+            ),
+          ),
+        );
       },
     );
     super.initState();

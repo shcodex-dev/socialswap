@@ -3,14 +3,9 @@ import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:random_string/random_string.dart';
-import 'package:socialswap/pages/chat_page.dart';
 import 'package:socialswap/pages/home.dart';
-import 'package:socialswap/pages/log_in.dart';
-import 'package:socialswap/pages/view_profile.dart';
-import 'package:socialswap/service/auth.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -28,8 +23,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
 
   getthesharedpref() async {
     myName = await SharedPreferenceHelper().getDisplayName();

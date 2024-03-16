@@ -1,8 +1,4 @@
 import 'package:socialswap/pages/chat_page.dart';
-import 'package:socialswap/pages/log_in.dart';
-import 'package:socialswap/pages/update_page.dart';
-import 'package:socialswap/pages/view_profile.dart';
-import 'package:socialswap/service/auth.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -120,44 +116,32 @@ class _HomeState extends State<Home> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text(""),
                   search
-                      ? Text("")
-                      : search
-                          ? Expanded(
-                              child: TextField(
-                              onChanged: (value) {
-                                initiateSearch(value.toUpperCase());
-                              },
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Search User',
-                                  hintStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w500)),
-                              style: TextStyle(
+                      ? Expanded(
+                          child: TextField(
+                          onChanged: (value) {
+                            initiateSearch(value.toUpperCase());
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Search User',
+                              hintStyle: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18.0,
-                                  fontWeight: FontWeight.w500),
-                            ))
-                          : GestureDetector(
-                              onTap: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              child: Container(
-                                  padding: EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 45, 45, 45),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Text("")),
-                            ),
-                  Text(
-                    "Social Swap",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 181, 181, 181),
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold),
-                  ),
+                                  fontWeight: FontWeight.w500)),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500),
+                        ))
+                      : Text(
+                          "Chats",
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 181, 181, 181),
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold),
+                        ),
                   GestureDetector(
                     onTap: () {
                       search = true;

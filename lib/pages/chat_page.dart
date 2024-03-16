@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_string_escapes, unnecessary_new, must_be_immutable, use_key_in_widget_constructors
 
-import 'package:socialswap/pages/home.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

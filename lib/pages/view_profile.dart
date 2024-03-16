@@ -41,95 +41,6 @@ class _ViewProfileState extends State<ViewProfile> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Color.fromARGB(255, 44, 44, 44),
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            Column(
-              children: [
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 31, 31, 31),
-                        Color.fromARGB(255, 165, 165, 165)
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Text(
-                          myName!,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Center(
-                        child: Text(
-                          myUserName!,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  tileColor: Colors.grey[200],
-                  title: Text('Update Profile',
-                      style: TextStyle(
-                          color: Colors.blueGrey[500],
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold)),
-                  leading: Icon(
-                    Icons.edit,
-                    color: Colors.blueGrey[500],
-                    size: 30.0,
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UpdateProfile()));
-                  },
-                ),
-                SizedBox(height: 300.0),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 80.0),
-                  child: Material(
-                    elevation: 5.0,
-                    child: ListTile(
-                      tileColor: Color.fromARGB(255, 78, 78, 78),
-                      title: Center(
-                        child: Text('Logout',
-                            style: TextStyle(
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      onTap: () {
-                        AuthMethods().logout();
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => LogIn()));
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -141,7 +52,7 @@ class _ViewProfileState extends State<ViewProfile> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => UpdateProfile()));
@@ -167,7 +78,7 @@ class _ViewProfileState extends State<ViewProfile> {
                   GestureDetector(
                     onTap: () {
                       AuthMethods().logout();
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) => LogIn()));
                     },
                     child: Container(

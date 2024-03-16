@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:socialswap/components/item.dart';
-import 'package:socialswap/components/item2.dart';
 import 'package:socialswap/models/coin.dart';
 import 'package:socialswap/pages/Recommendpage.dart';
 
@@ -158,7 +157,7 @@ class _MainHomeState extends State<MainHome> {
                     child: isRefreshing == true
                         ? Center(
                             child: CircularProgressIndicator(
-                              color: Color(0xffFBC700),
+                              color: Color.fromARGB(255, 81, 81, 81),
                             ),
                           )
                         : coinMarket == null || coinMarket!.length == 0

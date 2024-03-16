@@ -89,7 +89,7 @@ class _RecommendState extends State<Recommend> {
                           child: isRefreshing == true
                               ? Center(
                                   child: CircularProgressIndicator(
-                                    color: Color(0xffFBC700),
+                                    color: Color.fromARGB(255, 81, 81, 81),
                                   ),
                                 )
                               : coinMarket == null || coinMarket!.length == 0

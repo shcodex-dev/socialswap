@@ -167,16 +167,6 @@ class _ChatPageState extends State<ChatPage> {
               padding: const EdgeInsets.only(left: 10.0),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Home()));
-                    },
-                    child: Icon(
-                      Icons.arrow_back_ios_new_outlined,
-                      color: Color(0Xffc199cd),
-                    ),
-                  ),
                   SizedBox(
                     width: 90.0,
                   ),

@@ -17,7 +17,7 @@ class _IOState extends State<IO> {
   @override
   void initState() {
     Timer(
-      Duration(seconds: 2),
+      Duration(seconds: 1),
       () {
         Navigator.pushReplacement(
           context,

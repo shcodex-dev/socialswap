@@ -108,117 +108,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    String? name = myName;
-    String? username = myUserName;
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            Column(
-              children: [
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 31, 31, 31),
-                        Color.fromARGB(255, 165, 165, 165)
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Text(
-                          name!,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Center(
-                        child: Text(
-                          username!,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListTile(
-                  tileColor: Colors.grey[200],
-                  title: Text('View Profile',
-                      style: TextStyle(
-                          color: Colors.blueGrey[500],
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold)),
-                  leading: Icon(
-                    Icons.person,
-                    color: Colors.blueGrey[500],
-                    size: 30.0,
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => ViewProfile()));
-                  },
-                ),
-                SizedBox(height: 10.0),
-                ListTile(
-                  tileColor: Colors.grey[200],
-                  title: Text('Update Profile',
-                      style: TextStyle(
-                          color: Colors.blueGrey[500],
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold)),
-                  leading: Icon(
-                    Icons.edit,
-                    color: Colors.blueGrey[500],
-                    size: 30.0,
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UpdateProfile()));
-                  },
-                ),
-                SizedBox(height: 300.0),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 80.0),
-                  child: Material(
-                    elevation: 5.0,
-                    child: ListTile(
-                      tileColor: Color.fromARGB(255, 78, 78, 78),
-                      title: Center(
-                        child: Text('Logout',
-                            style: TextStyle(
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      onTap: () {
-                        AuthMethods().logout();
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => LogIn()));
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
       backgroundColor: Color.fromARGB(255, 45, 45, 45),
       body: SingleChildScrollView(
         child: Column(
@@ -231,46 +122,42 @@ class _HomeState extends State<Home> {
                 children: [
                   search
                       ? Text("")
-                      : GestureDetector(
-                          onTap: () {
-                            _scaffoldKey.currentState?.openDrawer();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 181, 181, 181),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Icon(
-                              Icons.person_2_rounded,
-                              color: Color.fromARGB(255, 81, 81, 81),
-                            ),
-                          ),
-                        ),
-                  search
-                      ? Expanded(
-                          child: TextField(
-                          onChanged: (value) {
-                            initiateSearch(value.toUpperCase());
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Search User',
-                              hintStyle: TextStyle(
+                      : search
+                          ? Expanded(
+                              child: TextField(
+                              onChanged: (value) {
+                                initiateSearch(value.toUpperCase());
+                              },
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Search User',
+                                  hintStyle: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500)),
+                              style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18.0,
-                                  fontWeight: FontWeight.w500)),
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500),
-                        ))
-                      : Text(
-                          "Social Swap",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 181, 181, 181),
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.bold),
-                        ),
+                                  fontWeight: FontWeight.w500),
+                            ))
+                          : GestureDetector(
+                              onTap: () {
+                                _scaffoldKey.currentState?.openDrawer();
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 45, 45, 45),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Text("")),
+                            ),
+                  Text(
+                    "Social Swap",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 181, 181, 181),
+                        fontSize: 22.0,
+                        fontWeight: FontWeight.bold),
+                  ),
                   GestureDetector(
                     onTap: () {
                       search = true;
@@ -416,7 +303,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   getthisUserInfo() async {
     username =
         widget.chatRoomId.replaceAll("_", "").replaceAll(widget.myUsername, "");
-    print(username);
     QuerySnapshot querySnapshot =
         await DatabaseMethods().getUserInfo(username.toUpperCase());
     name = "${querySnapshot.docs[0]["Name"]}";
@@ -434,14 +320,12 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () => {
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ChatPage(
-                    name: name,
-                    profileurl: profilePicUrl,
-                    username: username)));
+                    name: name, profileurl: profilePicUrl, username: username)))
       },
       child: Card(
         child: Container(

@@ -53,7 +53,7 @@ class _NavBarState extends State<NavBar> {
                   activeIcon: Image.asset(
                     'assets/icons/1.2.png',
                     height: myHeight * 0.03,
-                    color: Color(0xffFBC700),
+                    color: Color.fromARGB(255, 45, 45, 45),
                   )),
               BottomNavigationBarItem(
                   icon: Image.asset(
@@ -65,7 +65,7 @@ class _NavBarState extends State<NavBar> {
                   activeIcon: Image.asset(
                     'assets/icons/2.2.png',
                     height: myHeight * 0.03,
-                    color: Color(0xffFBC700),
+                    color: Color.fromARGB(255, 45, 45, 45),
                   )),
               BottomNavigationBarItem(
                   icon: Image.asset(
@@ -77,7 +77,7 @@ class _NavBarState extends State<NavBar> {
                   activeIcon: Image.asset(
                     'assets/icons/6.2.png',
                     height: myHeight * 0.03,
-                    color: Color(0xffFBC700),
+                    color: Color.fromARGB(255, 45, 45, 45),
                   )),
               BottomNavigationBarItem(
                   icon: Image.asset(
@@ -89,7 +89,7 @@ class _NavBarState extends State<NavBar> {
                   activeIcon: Image.asset(
                     'assets/icons/4.2.png',
                     height: myHeight * 0.03,
-                    color: Color(0xffFBC700),
+                    color: Color.fromARGB(255, 45, 45, 45),
                   )),
             ]),
       ),

@@ -15,11 +15,12 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  String? myName, myProfilePic, myUserName, myEmail;
+  String? myName, myProfilePic, myUserName, myEmail, StrName, Userid;
   bool btnState = false;
 
   getthesharedpref() async {
-    myName = await SharedPreferenceHelper().getDisplayName();
+    Userid = await SharedPreferenceHelper().getUserId();
+    StrName = myName = await SharedPreferenceHelper().getDisplayName();
     myProfilePic = await SharedPreferenceHelper().getUserPic();
     myUserName = await SharedPreferenceHelper().getUserName();
     myEmail = await SharedPreferenceHelper().getUserEmail();
@@ -100,23 +101,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
           email.replaceAll("@gmail.com", "").toUpperCase(),
         );
       }
-      if (name != FirebaseAuth.instance.currentUser!.displayName) {
+      if (name != StrName) {
         print("enderd");
-        print(FirebaseAuth.instance.currentUser!.uid);
-        await DatabaseMethods().updateUserName(
-            FirebaseAuth.instance.currentUser!.uid.toString(), name);
+        await DatabaseMethods().updateUserName(Userid!, name);
         await SharedPreferenceHelper().saveUserDisplayName(name);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Update Name Successful',
+              'Name Updated Successfully',
               style: TextStyle(fontSize: 20.0),
             ),
           ),
         );
       }
     } on FirebaseAuthException catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.orangeAccent,
@@ -127,6 +125,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
         ),
       );
     }
+    setState(() {
+      btnState = false;
+    });
   }
 
   Future<void> pickImage() async {
@@ -323,6 +324,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         setState(() {
                           email = myEmail!;
                           name = myName!;
+                          btnState = true;
                         });
                         updateData();
                       },
@@ -332,8 +334,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 return DecoratedBox(
                                   decoration: BoxDecoration(
                                     color: index.isEven
-                                        ? Colors.red
-                                        : Colors.green,
+                                        ? Colors.black
+                                        : Colors.purple,
                                   ),
                                 );
                               },

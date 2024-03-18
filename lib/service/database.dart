@@ -9,7 +9,6 @@ class DatabaseMethods {
 
   Future<String> uploadImage(
       {required Uint8List bytes,
-      // required String extension,
       required String id,
       required String folder}) async {
     try {

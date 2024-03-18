@@ -103,4 +103,28 @@ class DatabaseMethods {
         .where("users", arrayContains: myUsername!)
         .snapshots();
   }
+
+  Future<void> updateUserDetails(
+      String id, Map<String, dynamic> updatedUserInfoMap) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .update(updatedUserInfoMap);
+  }
+
+  Future<void> updateUserName(String id, String newName) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .update({"Name": newName});
+  }
+
+  Future<bool> checkIfEmailExists(String email) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .where("E-mail", isEqualTo: email)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
+  }
 }

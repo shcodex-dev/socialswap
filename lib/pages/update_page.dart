@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:random_string/random_string.dart';
-import 'package:socialswap/pages/home.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +17,6 @@ class UpdateProfile extends StatefulWidget {
 class _UpdateProfileState extends State<UpdateProfile> {
   String? myName, myProfilePic, myUserName, myEmail;
   bool btnState = false;
-  final _formkey = GlobalKey<FormState>();
-
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
 
   getthesharedpref() async {
     myName = await SharedPreferenceHelper().getDisplayName();
@@ -47,90 +41,87 @@ class _UpdateProfileState extends State<UpdateProfile> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   MemoryImage? image;
-  String password = "", confirmPassword = "", name = "", email = "";
+  String name = "", email = "";
   final imagePicker = ImagePicker();
   final DatabaseMethods db = DatabaseMethods();
 
-  updatedata() async {
-    if (password != null && password == confirmPassword) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password);
-
-        String Id = randomAlphaNumeric(10);
-        String user = _emailController.text.replaceAll("@gmail.com", "");
+  updateData() async {
+    try {
+      if (email.startsWith("www")) {
+        email = email.replaceFirst("www.", "");
+      }
+      if (email != FirebaseAuth.instance.currentUser!.email) {
+        await FirebaseAuth.instance.currentUser!.verifyBeforeUpdateEmail(email);
+        String user = email.replaceAll("@gmail.com", "");
         String updateusername =
             user.replaceFirst(user[0], user[0].toUpperCase());
         String firstletter = user.substring(0, 1).toUpperCase();
+        bool emailExists = await DatabaseMethods().checkIfEmailExists(email);
 
-        String? imageUrl = '';
-        if (image != null) {
-          imageUrl = await db.uploadImage(
-            bytes: image!.bytes,
-            // extension: _result!.files.first.extension!,
-            id: FirebaseAuth.instance.currentUser!.uid.toString(),
-            folder: 'profilePics',
+        if (emailExists) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.orangeAccent,
+              content: Text(
+                'Email already exists',
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
           );
+          return; // Stop further execution
         }
 
-        print(imageUrl);
-
         Map<String, dynamic> userInfoMap = {
-          "Name": _nameController.text,
-          "E-mail": _emailController.text,
+          "Name": name,
+          "E-mail": email,
           "username": updateusername.toUpperCase(),
           "SearchKey": firstletter,
-          "Photo": imageUrl,
-          "Id": Id,
+          // "Photo": imageUrl,
         };
-        await DatabaseMethods().addUserDetails(userInfoMap, Id);
-        await SharedPreferenceHelper().saveUserId(Id);
-        await SharedPreferenceHelper()
-            .saveUserDisplayName(_nameController.text);
-        await SharedPreferenceHelper().saveUserEmail(_emailController.text);
-        await SharedPreferenceHelper().saveUserPic(imageUrl);
-        await SharedPreferenceHelper().saveUserName(
-            _emailController.text.replaceAll("@gmail.com", "").toUpperCase());
+
+        // Update user details
+
+        await DatabaseMethods().updateUserDetails(
+            FirebaseAuth.instance.currentUser!.uid.toString(), userInfoMap);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Registration Successful',
+              'Update Email Successful',
               style: TextStyle(fontSize: 20.0),
             ),
           ),
         );
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home()));
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text(
-                'Password Provided is too Weak',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-          );
-        } else if (e.code == 'email-already-in-use') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text(
-                'Account Already exists',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-          );
-        }
+
+        // Update shared preferences
+        await SharedPreferenceHelper().saveUserEmail(email);
+        // await SharedPreferenceHelper().saveUserPic(imageUrl);
+        await SharedPreferenceHelper().saveUserName(
+          email.replaceAll("@gmail.com", "").toUpperCase(),
+        );
       }
-    } else {
+      if (name != FirebaseAuth.instance.currentUser!.displayName) {
+        print("enderd");
+        print(FirebaseAuth.instance.currentUser!.uid);
+        await DatabaseMethods().updateUserName(
+            FirebaseAuth.instance.currentUser!.uid.toString(), name);
+        await SharedPreferenceHelper().saveUserDisplayName(name);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Update Name Successful',
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text(
-            'Password is not Right',
+            'Failed to update: ${e.message}',
             style: TextStyle(fontSize: 18.0),
           ),
         ),
@@ -300,47 +291,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                "Username",
-                                style: TextStyle(
-                                    fontSize: 24, color: Colors.grey[800]),
-                              ),
-                            ),
-                            Container(height: 10),
-                            Center(
-                              child: TextFormField(
-                                initialValue: myUserName,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(color: Colors.white),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    myName = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            Container(height: 10),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: const BorderSide(
-                          color: Color.fromARGB(255, 117, 117, 117),
-                          width: 2,
-                        ),
-                      ),
-                      elevation: 0,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Center(
-                              child: Text(
                                 "Email",
                                 style: TextStyle(
                                     fontSize: 24, color: Colors.grey[800]),
@@ -355,7 +305,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 ),
                                 onChanged: (value) {
                                   setState(() {
-                                    myName = value;
+                                    myEmail = value;
                                   });
                                 },
                               ),
@@ -370,13 +320,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        if (_formkey.currentState!.validate()) {
-                          setState(() {
-                            email = _emailController.text;
-                            name = _nameController.text;
-                          });
-                        }
-                        updatedata();
+                        setState(() {
+                          email = myEmail!;
+                          name = myName!;
+                        });
+                        updateData();
                       },
                       child: btnState
                           ? SpinKitCircle(

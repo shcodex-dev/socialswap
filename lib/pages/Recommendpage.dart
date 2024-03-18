@@ -25,107 +25,103 @@ class _RecommendState extends State<Recommend> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color.fromARGB(255, 45, 45, 45),
-        body: SingleChildScrollView(
-          child: Container(
-            height: myHeight,
-            width: myWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  height: myHeight * 0.04,
+        body: Container(
+          height: myHeight,
+          width: myWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                height: myHeight * 0.04,
+              ),
+              Text(
+                "Recommend to Buy",
+                style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: myHeight * 0.02,
+              ),
+              Container(
+                height: myHeight * 0.80,
+                width: myWidth,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50),
+                  ),
                 ),
-                Text(
-                  "Recommend to Buy",
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: myHeight * 0.02,
-                ),
-                Container(
-                  height: 800,
-                  width: myWidth,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: myHeight * 0.03,
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: myHeight * 0.03,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: myWidth * 0.08),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: myWidth * 0.08),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        ),
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.02,
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.02,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: myWidth * 0.05),
+                      child: Row(
+                        children: [],
                       ),
-                      SizedBox(
-                        height: myHeight * 0.02,
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.02,
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: myWidth * 0.05),
-                        child: Row(
-                          children: [],
-                        ),
-                      ),
-                      SizedBox(
-                        height: myHeight * 0.01,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: myWidth * 0.03),
-                          child: isRefreshing == true
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: Color.fromARGB(255, 81, 81, 81),
-                                  ),
-                                )
-                              : coinMarket == null || coinMarket!.length == 0
-                                  ? Padding(
-                                      padding: EdgeInsets.all(myHeight * 0.06),
-                                      child: Center(
-                                        child: Text(
-                                          'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
-                                          style: TextStyle(fontSize: 18),
-                                        ),
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.01,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: myWidth * 0.03),
+                        child: isRefreshing == true
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Color.fromARGB(255, 81, 81, 81),
+                                ),
+                              )
+                            : coinMarket == null || coinMarket!.length == 0
+                                ? Padding(
+                                    padding: EdgeInsets.all(myHeight * 0.06),
+                                    child: Center(
+                                      child: Text(
+                                        'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
+                                        style: TextStyle(fontSize: 18),
                                       ),
-                                    )
-                                  : ListView.builder(
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: coinMarket!.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(children: [
-                                          Item2(
-                                            item: coinMarket![index],
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          )
-                                        ]);
-                                      },
                                     ),
-                        ),
+                                  )
+                                : ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: coinMarket!.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(children: [
+                                        Item2(
+                                          item: coinMarket![index],
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        )
+                                      ]);
+                                    },
+                                  ),
                       ),
-                      SizedBox(
-                        height: myHeight * 0.01,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    ),
+                    SizedBox(
+                      height: myHeight * 0.01,
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),

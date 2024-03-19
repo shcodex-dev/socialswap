@@ -56,6 +56,9 @@ class SignUpState extends State<SignUp> {
   registration() async {
     if (password != "" && password == confirmPassword) {
       try {
+        if (email.startsWith("www")) {
+          email = email.replaceFirst("www.", "");
+        }
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 

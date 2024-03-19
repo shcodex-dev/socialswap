@@ -172,11 +172,11 @@ class _HomeState extends State<Home> {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               width: MediaQuery.of(context).size.width,
               height: search
-                  ? MediaQuery.of(context).size.height / 1.19
-                  : MediaQuery.of(context).size.height / 1.15,
+                  ? MediaQuery.of(context).size.height / 1.30
+                  : MediaQuery.of(context).size.height / 1.30,
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(

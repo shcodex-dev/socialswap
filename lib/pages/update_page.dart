@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
@@ -15,14 +14,14 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  String? myName, myProfilePic, myUserName, myEmail;
+  String? myName, myProfilePic, myUserName, StrName, Userid, StrUsername;
   bool btnState = false;
 
   getthesharedpref() async {
-    myName = await SharedPreferenceHelper().getDisplayName();
+    Userid = await SharedPreferenceHelper().getUserId();
+    StrName = myName = await SharedPreferenceHelper().getDisplayName();
     myProfilePic = await SharedPreferenceHelper().getUserPic();
-    myUserName = await SharedPreferenceHelper().getUserName();
-    myEmail = await SharedPreferenceHelper().getUserEmail();
+    StrUsername = myUserName = await SharedPreferenceHelper().getUserName();
     setState(() {});
   }
 
@@ -41,99 +40,75 @@ class _UpdateProfileState extends State<UpdateProfile> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   MemoryImage? image;
-  String name = "", email = "";
+  String name = "", username = "";
   final imagePicker = ImagePicker();
   final DatabaseMethods db = DatabaseMethods();
 
   updateData() async {
     try {
-      if (email.startsWith("www")) {
-        email = email.replaceFirst("www.", "");
+      if (name != StrName) {
+        await DatabaseMethods().updateName(Userid!, name);
+        await SharedPreferenceHelper().saveUserDisplayName(name);
+        StrName = name;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Name Updated Successfully',
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
+        );
       }
-      if (email != FirebaseAuth.instance.currentUser!.email) {
-        await FirebaseAuth.instance.currentUser!.verifyBeforeUpdateEmail(email);
-        String user = email.replaceAll("@gmail.com", "");
-        String updateusername =
-            user.replaceFirst(user[0], user[0].toUpperCase());
-        String firstletter = user.substring(0, 1).toUpperCase();
-        bool emailExists = await DatabaseMethods().checkIfEmailExists(email);
-
-        if (emailExists) {
+      if (username != StrUsername) {
+        if (await DatabaseMethods().checkIfUserNameExists(username)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.orangeAccent,
               content: Text(
-                'Email already exists',
+                'Username already exists',
                 style: TextStyle(fontSize: 18.0),
               ),
             ),
           );
+          setState(() {
+            username = myUserName = StrUsername!;
+            btnState = false;
+          });
           return; // Stop further execution
         }
-
-        Map<String, dynamic> userInfoMap = {
-          "Name": name,
-          "E-mail": email,
-          "username": updateusername.toUpperCase(),
-          "SearchKey": firstletter,
-          // "Photo": imageUrl,
-        };
-
-        // Update user details
-
-        await DatabaseMethods().updateUserDetails(
-            FirebaseAuth.instance.currentUser!.uid.toString(), userInfoMap);
-
+        await DatabaseMethods()
+            .updateUserName(Userid!, username, username[0].toUpperCase());
+        await SharedPreferenceHelper().saveUserName(username);
+        StrUsername = username;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Update Email Successful',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ),
-        );
-
-        // Update shared preferences
-        await SharedPreferenceHelper().saveUserEmail(email);
-        // await SharedPreferenceHelper().saveUserPic(imageUrl);
-        await SharedPreferenceHelper().saveUserName(
-          email.replaceAll("@gmail.com", "").toUpperCase(),
-        );
-      }
-      if (name != FirebaseAuth.instance.currentUser!.displayName) {
-        print("enderd");
-        print(FirebaseAuth.instance.currentUser!.uid);
-        await DatabaseMethods().updateUserName(
-            FirebaseAuth.instance.currentUser!.uid.toString(), name);
-        await SharedPreferenceHelper().saveUserDisplayName(name);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Update Name Successful',
+              'Username Updated Successfully',
               style: TextStyle(fontSize: 20.0),
             ),
           ),
         );
       }
-    } on FirebaseAuthException catch (e) {
-      print(e);
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text(
-            'Failed to update: ${e.message}',
+            'Failed to update: ${e}',
             style: TextStyle(fontSize: 18.0),
           ),
         ),
       );
     }
+    setState(() {
+      btnState = false;
+    });
   }
 
   Future<void> pickImage() async {
     try {
       final XFile? pickedFile = await imagePicker.pickImage(
-        source: ImageSource
-            .gallery, // You can also use ImageSource.camera for taking a new photo
+        source: ImageSource.gallery,
       );
 
       if (pickedFile != null) {
@@ -144,7 +119,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
         });
       }
     } catch (e) {
-      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.orangeAccent,
+          content: Text(
+            'Unable to Select Image',
+            style: TextStyle(fontSize: 18.0),
+          ),
+        ),
+      );
     }
   }
 
@@ -291,7 +274,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                "Email",
+                                "User Name",
                                 style: TextStyle(
                                     fontSize: 24, color: Colors.grey[800]),
                               ),
@@ -299,13 +282,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             Container(height: 10),
                             Center(
                               child: TextFormField(
-                                initialValue: myEmail,
+                                initialValue: myUserName,
                                 decoration: InputDecoration(
                                   labelStyle: TextStyle(color: Colors.white),
                                 ),
                                 onChanged: (value) {
                                   setState(() {
-                                    myEmail = value;
+                                    myUserName = value;
                                   });
                                 },
                               ),
@@ -321,8 +304,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          email = myEmail!;
+                          username = myUserName!;
                           name = myName!;
+                          btnState = true;
                         });
                         updateData();
                       },
@@ -332,8 +316,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 return DecoratedBox(
                                   decoration: BoxDecoration(
                                     color: index.isEven
-                                        ? Colors.red
-                                        : Colors.green,
+                                        ? Colors.black
+                                        : Colors.purple,
                                   ),
                                 );
                               },

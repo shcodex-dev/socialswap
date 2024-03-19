@@ -9,7 +9,6 @@ class DatabaseMethods {
 
   Future<String> uploadImage(
       {required Uint8List bytes,
-      // required String extension,
       required String id,
       required String folder}) async {
     try {
@@ -104,25 +103,25 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  Future<void> updateUserDetails(
-      String id, Map<String, dynamic> updatedUserInfoMap) async {
+  Future<void> updateUserName(
+      String id, String newUserName, String newSearchKey) async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(id)
-        .update(updatedUserInfoMap);
+        .update({"username": newUserName, "SearchKey": newSearchKey});
   }
 
-  Future<void> updateUserName(String id, String newName) async {
+  Future<void> updateName(String id, String newName) async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(id)
         .update({"Name": newName});
   }
 
-  Future<bool> checkIfEmailExists(String email) async {
+  Future<bool> checkIfUserNameExists(String username) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("users")
-        .where("E-mail", isEqualTo: email)
+        .where("username", isEqualTo: username)
         .get();
 
     return querySnapshot.docs.isNotEmpty;

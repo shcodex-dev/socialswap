@@ -9,7 +9,6 @@ class DatabaseMethods {
 
   Future<String> uploadImage(
       {required Uint8List bytes,
-      // required String extension,
       required String id,
       required String folder}) async {
     try {
@@ -102,5 +101,29 @@ class DatabaseMethods {
         .orderBy("time", descending: true)
         .where("users", arrayContains: myUsername!)
         .snapshots();
+  }
+
+  Future<void> updateUserName(
+      String id, String newUserName, String newSearchKey) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .update({"username": newUserName, "SearchKey": newSearchKey});
+  }
+
+  Future<void> updateName(String id, String newName) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .update({"Name": newName});
+  }
+
+  Future<bool> checkIfUserNameExists(String username) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .where("username", isEqualTo: username)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty;
   }
 }

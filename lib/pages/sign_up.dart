@@ -1,4 +1,4 @@
-import 'package:socialswap/pages/home.dart';
+import 'package:socialswap/components/navBar.dart';
 import 'package:socialswap/pages/log_in.dart';
 import 'package:socialswap/components/reuseable_widgets.dart';
 import 'package:socialswap/service/database.dart';
@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
-import 'package:file_picker/file_picker.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -20,7 +19,6 @@ class SignUp extends StatefulWidget {
 
 class SignUpState extends State<SignUp> {
   MemoryImage? image;
-  FilePickerResult? _result;
   final imagePicker = ImagePicker();
 
   bool btnState = false;
@@ -56,9 +54,12 @@ class SignUpState extends State<SignUp> {
   final _formkey = GlobalKey<FormState>();
 
   registration() async {
-    if (password != null && password == confirmPassword) {
+    if (password != "" && password == confirmPassword) {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance
+        if (email.startsWith("www")) {
+          email = email.replaceFirst("www.", "");
+        }
+        await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
         String Id = randomAlphaNumeric(10);
@@ -76,9 +77,6 @@ class SignUpState extends State<SignUp> {
             folder: 'profilePics',
           );
         }
-
-        print(imageUrl);
-
         Map<String, dynamic> userInfoMap = {
           "Name": _nameController.text,
           "E-mail": _emailController.text,
@@ -105,7 +103,7 @@ class SignUpState extends State<SignUp> {
           ),
         );
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home()));
+            context, MaterialPageRoute(builder: (context) => NavBar()));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -140,6 +138,9 @@ class SignUpState extends State<SignUp> {
         ),
       );
     }
+    setState(() {
+      btnState = false;
+    });
   }
 
   @override
@@ -200,7 +201,7 @@ class SignUpState extends State<SignUp> {
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
-                          height: MediaQuery.of(context).size.height / 1.4,
+                          height: 645,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -266,77 +267,71 @@ class SignUpState extends State<SignUp> {
                                     Icons.password_outlined,
                                     true,
                                     _confirmPasswordController),
-                                SizedBox(
-                                  height: 30.0,
-                                ),
                                 // SignUp Button //
-
-                                GestureDetector(
-                                  onTap: () {
-                                    if (_formkey.currentState!.validate()) {
-                                      setState(() {
-                                        email = _emailController.text;
-                                        name = _nameController.text;
-                                        password = _passwordController.text;
-                                        confirmPassword =
-                                            _confirmPasswordController.text;
-                                      });
-                                    }
-                                    registration();
-                                  },
-                                  child: btnState
-                                      ? SpinKitCircle(
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return DecoratedBox(
-                                              decoration: BoxDecoration(
-                                                color: index.isEven
-                                                    ? Colors.red
-                                                    : Colors.green,
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : Center(
-                                          child: Container(
-                                            width: 130,
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              elevation: 10.0,
-                                              child: Center(
-                                                child: Container(
-                                                  width: 130,
-                                                  padding: EdgeInsets.all(10.0),
-                                                  decoration: BoxDecoration(
-                                                      color: Color.fromARGB(
-                                                          255, 44, 44, 44),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  child: Center(
-                                                    child: Text(
-                                                      "Sign Up",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-
+                    GestureDetector(
+                      onTap: () {
+                        if (_formkey.currentState!.validate()) {
+                          setState(() {
+                            email = _emailController.text;
+                            name = _nameController.text;
+                            password = _passwordController.text;
+                            confirmPassword = _confirmPasswordController.text;
+                            btnState = true;
+                          });
+                        }
+                        registration();
+                      },
+                      child: btnState
+                          ? SpinKitCircle(
+                              itemBuilder: (BuildContext context, int index) {
+                                return DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: index.isEven
+                                        ? Colors.black
+                                        : Colors.purple,
+                                  ),
+                                );
+                              },
+                            )
+                          : Center(
+                              child: Container(
+                                width: 130,
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  elevation: 10.0,
+                                  child: Center(
+                                    child: Container(
+                                      width: 130,
+                                      padding: EdgeInsets.all(10.0),
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 44, 44, 44),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                        child: Text(
+                                          "Sign Up",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     // Create an Account //
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -364,11 +359,11 @@ class SignUpState extends State<SignUp> {
                     ),
 
                     SizedBox(
-                      height: 10.0,
+                      height: 20.0,
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

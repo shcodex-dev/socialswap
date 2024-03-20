@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace, use_build_context_synchronously, prefer_final_fields
+// ignore_for_file: sized_box_for_whitespace, use_build_context_synchronously, prefer_final_fields, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:socialswap/pages/forgotpassword.dart';
 import 'package:socialswap/pages/sign_up.dart';
@@ -181,7 +181,7 @@ class LogInState extends State<LogIn> {
                                       _passwordController),
 
                                   SizedBox(
-                                    height: 20.0,
+                                    height: 30.0,
                                   ),
                                   // Forgot Password //
                                   GestureDetector(

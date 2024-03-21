@@ -59,6 +59,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           if (imageurl != "") {
             image = null;
             myProfilePic = imageurl;
+            await SharedPreferenceHelper().saveUserPic(imageurl);
           }
         }
       }

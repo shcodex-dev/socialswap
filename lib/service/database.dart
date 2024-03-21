@@ -15,9 +15,32 @@ class DatabaseMethods {
       Reference ref = _firebaseStorage.ref().child(folder).child(id);
       await ref.putData(bytes);
       String songCoverUrl = await ref.getDownloadURL();
-      print("db_upload");
-      print(songCoverUrl);
       return songCoverUrl;
+    } catch (exception) {
+      return '';
+    }
+  }
+
+  Future<String> updateImage({
+    required Uint8List bytes,
+    required String id,
+    required String folder,
+  }) async {
+    try {
+      Reference ref = _firebaseStorage.ref().child(folder).child(id);
+
+      // Check if the image already exists
+      if (await ref.getMetadata().then((metadata) => metadata != null)) {
+        // Delete the existing image
+        await ref.delete();
+      }
+
+      // Upload the new image
+      await ref.putData(bytes);
+
+      // Get the updated image URL
+      String imageUrl = await ref.getDownloadURL();
+      return imageUrl;
     } catch (exception) {
       return '';
     }

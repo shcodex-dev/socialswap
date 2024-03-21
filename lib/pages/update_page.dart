@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -16,13 +18,14 @@ class UpdateProfile extends StatefulWidget {
 class _UpdateProfileState extends State<UpdateProfile> {
   String? myName, myProfilePic, myUserName, StrName, Userid, StrUsername;
   bool btnState = false;
+  MemoryImage? image;
 
   getthesharedpref() async {
     Userid = await SharedPreferenceHelper().getUserId();
     StrName = myName = await SharedPreferenceHelper().getDisplayName();
     myProfilePic = await SharedPreferenceHelper().getUserPic();
     StrUsername = myUserName = await SharedPreferenceHelper().getUserName();
-    setState(() {});
+    setState(() async {});
   }
 
   ontheload() async {
@@ -39,13 +42,26 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  MemoryImage? image;
   String name = "", username = "";
   final imagePicker = ImagePicker();
   final DatabaseMethods db = DatabaseMethods();
 
   updateData() async {
     try {
+      if (image != null) {
+        if (image != null) {
+          String imageurl = "";
+          imageurl = await db.updateImage(
+            bytes: image!.bytes,
+            id: FirebaseAuth.instance.currentUser!.uid.toString(),
+            folder: 'profilePics',
+          );
+          if (imageurl != "") {
+            image = null;
+            myProfilePic = imageurl;
+          }
+        }
+      }
       if (name != StrName) {
         await DatabaseMethods().updateName(Userid!, name);
         await SharedPreferenceHelper().saveUserDisplayName(name);

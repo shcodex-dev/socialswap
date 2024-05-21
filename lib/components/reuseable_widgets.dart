@@ -31,6 +31,7 @@ Widget resuedTextField(String text, IconData icon, bool isPasswordType,
               if (value == null || value.isEmpty) {
                 return "Please Enter $text";
               }
+              return null;
             },
             obscureText: isPasswordType,
             enableSuggestions: !isPasswordType,

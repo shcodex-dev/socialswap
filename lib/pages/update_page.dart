@@ -6,7 +6,7 @@ import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
+
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});

@@ -52,7 +52,18 @@ class AppConfig {
       explorerUrl: 'https://mumbai.polygonscan.com',
       enabled: true,
       label: 'Matic (Mumbai)',
-    )
+    ),
+    NetworkType.Sepolia: AppConfigParams(  // Added Sepolia
+      'https://sepolia.infura.io/v3/1d5d3542e6e1404fbd23678068b04f6a',
+      '0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43',  // Replace with your actual contract address
+      web3RdpUrl: 'wss://ws.sepolia.org',  // Replace with actual websocket URL if available
+      symbol: 'ETH',
+      faucetUrl: 'https://sepoliafaucet.com',  // Replace with actual faucet URL
+      explorerUrl: 'https://sepolia.etherscan.io',  // Replace with actual explorer URL
+      enabled: true,
+      icon: WalletIcons.ethereum,
+      label: 'Ethereum (Sepolia)',
+    ),
   };
 }
 

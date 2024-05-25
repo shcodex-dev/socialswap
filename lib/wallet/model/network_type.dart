@@ -15,6 +15,7 @@ class NetworkType extends EnumClass {
   static const NetworkType Ethereum = _$Ethereum;
   static const NetworkType Matic = _$Matic;
   static const NetworkType BSC = _$BSC;
+    static const NetworkType Sepolia = _$Sepolia; // Added Sepolia
 
   static BuiltSet<NetworkType> get values => _$values;
 

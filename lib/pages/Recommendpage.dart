@@ -147,14 +147,15 @@ class _RecommendState extends State<Recommend> {
       isRefreshing = false;
     });
     if (response.statusCode == 200) {
+      print("Sajid is great");
       var x = response.body;
       coinMarketList = coinFromJson(x);
+      print(coinMarket);
       setState(() {
         coinMarket = coinMarketList;
       });
     } else {
       print(response.statusCode);
     }
-    return null;
   }
 }

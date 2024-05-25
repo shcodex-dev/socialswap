@@ -10,6 +10,7 @@ const NetworkType _$Local = const NetworkType._('Local');
 const NetworkType _$Ethereum = const NetworkType._('Ethereum');
 const NetworkType _$Matic = const NetworkType._('Matic');
 const NetworkType _$BSC = const NetworkType._('BSC');
+const NetworkType _$Sepolia = const NetworkType._('Sepolia');
 
 NetworkType _$valuesOf(String name) {
   switch (name) {
@@ -21,6 +22,8 @@ NetworkType _$valuesOf(String name) {
       return _$Matic;
     case 'BSC':
       return _$BSC;
+    case 'Sepolia':
+      return _$Sepolia;
     default:
       throw new ArgumentError(name);
   }
@@ -32,6 +35,7 @@ final BuiltSet<NetworkType> _$values =
   _$Ethereum,
   _$Matic,
   _$BSC,
+  _$Sepolia,
 ]);
 
 Serializer<NetworkType> _$networkTypeSerializer = new _$NetworkTypeSerializer();

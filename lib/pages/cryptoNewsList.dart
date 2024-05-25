@@ -104,16 +104,14 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
         width: screenWidth * 0.9,
         margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 20.0,
-              spreadRadius: 20.0
-            )
-          ]
-        ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20.0,
+                  spreadRadius: 20.0)
+            ]),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,23 +188,24 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
     }
 
     return StreamBuilder(
-        stream: streamOfNews(),
-        builder: (context, snapshot) {
-          return newsItems.length == 0
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView.builder(
-                  itemCount: newsItems.length,
-                  itemBuilder: (context, index) {
-                    cryptoNewsObject toShow = cryptoNewsObject(
-                        heading: newsItems[index]["heading"],
-                        source: newsItems[index]["source"],
-                        description: newsItems[index]["description"]);
-                    return cryptoNewsWidgetMaker(toShow);
-                  },
-                );
-        });
+      stream: streamOfNews(),
+      builder: (context, snapshot) {
+        return newsItems.length == 0
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                itemCount: newsItems.length,
+                itemBuilder: (context, index) {
+                  cryptoNewsObject toShow = cryptoNewsObject(
+                      heading: newsItems[index]["heading"],
+                      source: newsItems[index]["source"],
+                      description: newsItems[index]["description"]);
+                  return cryptoNewsWidgetMaker(toShow);
+                },
+              );
+      },
+    );
   }
 }
 
@@ -217,3 +216,4 @@ class cryptoNewsObject {
   cryptoNewsObject(
       {required this.heading, required this.source, required this.description});
 }
+

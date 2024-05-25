@@ -8,7 +8,7 @@ abstract class Wallet implements Built<Wallet, WalletBuilder> {
   factory Wallet([void Function(WalletBuilder)? updates]) => _$Wallet((b) => b
     ..tokenBalance = BigInt.from(0)
     ..ethBalance = BigInt.from(0)
-    ..network = NetworkType.Ethereum
+    ..network = NetworkType.Sepolia
     ..errors = BuiltList<String>().toBuilder()
     ..loading = false
     ..update(updates));

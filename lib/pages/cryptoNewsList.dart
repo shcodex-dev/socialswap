@@ -227,30 +227,33 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
                                   topRight: Radius.circular(50),
                                 ),
                               ),
-                              child: StreamBuilder(
-                                stream: streamOfNews(),
-                                builder: (context, snapshot) {
-                                  return newsItems.length == 0
-                                      ? Center(
-                                          child: CircularProgressIndicator(),
-                                        )
-                                      : ListView.builder(
-                                          itemCount: newsItems.length,
-                                          itemBuilder: (context, index) {
-                                            cryptoNewsObject toShow =
-                                                cryptoNewsObject(
-                                                    heading: newsItems[index]
-                                                        ["heading"],
-                                                    source: newsItems[index]
-                                                        ["source"],
-                                                    description:
-                                                        newsItems[index]
-                                                            ["description"]);
-                                            return cryptoNewsWidgetMaker(
-                                                toShow);
-                                          },
-                                        );
-                                },
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:30.0),
+                                child: StreamBuilder(
+                                  stream: streamOfNews(),
+                                  builder: (context, snapshot) {
+                                    return newsItems.length == 0
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : ListView.builder(
+                                            itemCount: newsItems.length,
+                                            itemBuilder: (context, index) {
+                                              cryptoNewsObject toShow =
+                                                  cryptoNewsObject(
+                                                      heading: newsItems[index]
+                                                          ["heading"],
+                                                      source: newsItems[index]
+                                                          ["source"],
+                                                      description:
+                                                          newsItems[index]
+                                                              ["description"]);
+                                              return cryptoNewsWidgetMaker(
+                                                  toShow);
+                                            },
+                                          );
+                                  },
+                                ),
                               ))
                         ])));
       },

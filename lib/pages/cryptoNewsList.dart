@@ -72,6 +72,7 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final myHeight = MediaQuery.of(context).size.height;
     Widget CryptoNewsHeading() {
       return Container(
         margin: EdgeInsets.only(bottom: screenWidth * 0.02),
@@ -83,13 +84,14 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
                 bottomRight: Radius.circular(20))),
         height: screenWidth * 0.12,
         child: Center(
-            child: Text(
-          'Latest Cryptocurrency News',
-          style: TextStyle(
-              fontFamily: 'comfortaa',
-              fontSize: screenWidth * 0.055,
-              fontWeight: FontWeight.bold),
-        )),
+          child: Text(
+            'Latest Cryptocurrency News',
+            style: TextStyle(
+                fontFamily: 'comfortaa',
+                fontSize: screenWidth * 0.055,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       );
     }
 
@@ -102,15 +104,15 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
     Widget cryptoNewsWidgetMaker(cryptoNewsObject toShow) {
       return Container(
         width: screenWidth * 0.9,
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 20.0),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 20.0,
-                  spreadRadius: 20.0)
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10.0,
+                  spreadRadius: 10.0)
             ]),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -190,20 +192,70 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
     return StreamBuilder(
       stream: streamOfNews(),
       builder: (context, snapshot) {
-        return newsItems.length == 0
+        return newsItems.length == 1
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                itemCount: newsItems.length,
-                itemBuilder: (context, index) {
-                  cryptoNewsObject toShow = cryptoNewsObject(
-                      heading: newsItems[index]["heading"],
-                      source: newsItems[index]["source"],
-                      description: newsItems[index]["description"]);
-                  return cryptoNewsWidgetMaker(toShow);
-                },
-              );
+            : Scaffold(
+                backgroundColor: Color.fromARGB(255, 45, 45, 45),
+                body: Container(
+                    height: myHeight,
+                    width: screenWidth,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            height: myHeight * 0.04,
+                          ),
+                          Text(
+                            "Latest Cryptocurrency News",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: myHeight * 0.02,
+                          ),
+                          Container(
+                              height: myHeight * 0.75,
+                              width: screenWidth,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(50),
+                                  topRight: Radius.circular(50),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top:30.0),
+                                child: StreamBuilder(
+                                  stream: streamOfNews(),
+                                  builder: (context, snapshot) {
+                                    return newsItems.length == 0
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : ListView.builder(
+                                            itemCount: newsItems.length,
+                                            itemBuilder: (context, index) {
+                                              cryptoNewsObject toShow =
+                                                  cryptoNewsObject(
+                                                      heading: newsItems[index]
+                                                          ["heading"],
+                                                      source: newsItems[index]
+                                                          ["source"],
+                                                      description:
+                                                          newsItems[index]
+                                                              ["description"]);
+                                              return cryptoNewsWidgetMaker(
+                                                  toShow);
+                                            },
+                                          );
+                                  },
+                                ),
+                              ))
+                        ])));
       },
     );
   }
@@ -216,4 +268,3 @@ class cryptoNewsObject {
   cryptoNewsObject(
       {required this.heading, required this.source, required this.description});
 }
-

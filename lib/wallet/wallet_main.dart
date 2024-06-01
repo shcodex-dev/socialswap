@@ -45,7 +45,7 @@ class _MainAppState extends State<MainApp> {
             providers: snapshot.data!,
             child: WalletProvider(
               builder: (context, store) => MaterialApp(
-                title: 'Flutter App',
+                debugShowCheckedModeBanner: false,
                 initialRoute: '/',
                 routes: getRoutes(context),
                 navigatorObservers: [observer],

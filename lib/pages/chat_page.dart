@@ -22,7 +22,7 @@ class _ChatPageState extends State<ChatPage> {
   Stream? messageStream;
 
   // user wallet pref //
-  String? store, address, network, privateKey;
+  String? userAddress, userPrivateKey;
 
   getthesharedpref() async {
     myUserName = await SharedPreferenceHelper().getUserName();
@@ -31,10 +31,8 @@ class _ChatPageState extends State<ChatPage> {
     myEmail = await SharedPreferenceHelper().getUserEmail();
 
     // user waller pref //
-    store = await SharedPreferenceHelper().getStore();
-    address = await SharedPreferenceHelper().getAddress();
-    network = await SharedPreferenceHelper().getNetwork();
-    privateKey = await SharedPreferenceHelper().getPrivateKey();
+    userAddress = await SharedPreferenceHelper().getAddress();
+    userPrivateKey = await SharedPreferenceHelper().getPrivateKey();
     
     chatRoomId = getChatRoomIdbyUsername(widget.username, myUserName!);
     setState(() {});
@@ -195,10 +193,8 @@ class _ChatPageState extends State<ChatPage> {
                         size: 30.0,
                       ),
                       onPressed: () {
-                        print(privateKey);
-                        print(network);
-                        print(store);
-                        print(address);
+                       print("address sp: $userAddress");
+                       print("privateKey sp: $userPrivateKey");
                       },
                     ),
                   ),

@@ -22,6 +22,7 @@ class WalletMainPage extends HookWidget {
     final store = useWallet(context);
     final address = store.state.address;
     final network = store.state.network;
+    String? pk, addr;
 
     useEffect(() {
       store.initialise();
@@ -33,20 +34,16 @@ class WalletMainPage extends HookWidget {
       [address, network],
     );
 
-    useEffect(() {
-      // Define the async function inside the useEffect
-      Future<void> initAsync() async {
-        
-        await SharedPreferenceHelper().saveStore(store as String);
-        await SharedPreferenceHelper().saveAddress(store.state.address ?? '');
-        await SharedPreferenceHelper().saveNetwork(network as String);
-        await SharedPreferenceHelper().savePrivateKey(
-            store.getPrivateKey() ?? '');
-      }
+    // useEffect(() {
+    //   // Define the async function inside the useEffect
+    //   initAsync() async {
+    //     pk = await SharedPreferenceHelper().getPrivateKey();
+    //     addr = await SharedPreferenceHelper().getAddress();
+    //   }
 
-      initAsync();
-      return () {};
-    }, []);
+    //   initAsync();
+    //   return () {};
+    // }, []);
 
     return Scaffold(
       drawer: MainMenu(
@@ -118,6 +115,20 @@ class WalletMainPage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            IconButton(
+            icon: const Icon(Icons.upload),
+            onPressed: () async {
+              pk = await SharedPreferenceHelper().getPrivateKey();
+              addr = await SharedPreferenceHelper().getAddress();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.downloading),
+            onPressed: () async {
+              print("addr: $addr");
+              print("pk: $pk");
+            },
+          ),
             ChangeNetwork(
               onChange: store.changeNetwork,
               currentValue: store.state.network,

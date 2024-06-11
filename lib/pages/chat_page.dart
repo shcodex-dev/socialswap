@@ -21,12 +21,21 @@ class _ChatPageState extends State<ChatPage> {
   String? myUserName, myProfilePic, myName, myEmail, messageId, chatRoomId;
   Stream? messageStream;
 
+  // user wallet pref //
+  String? store, address, network, privateKey;
+
   getthesharedpref() async {
     myUserName = await SharedPreferenceHelper().getUserName();
     myProfilePic = await SharedPreferenceHelper().getUserPic();
     myName = await SharedPreferenceHelper().getDisplayName();
     myEmail = await SharedPreferenceHelper().getUserEmail();
 
+    // user waller pref //
+    store = await SharedPreferenceHelper().getStore();
+    address = await SharedPreferenceHelper().getAddress();
+    network = await SharedPreferenceHelper().getNetwork();
+    privateKey = await SharedPreferenceHelper().getPrivateKey();
+    
     chatRoomId = getChatRoomIdbyUsername(widget.username, myUserName!);
     setState(() {});
   }
@@ -165,16 +174,33 @@ class _ChatPageState extends State<ChatPage> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 90.0,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50.0),
+                    child: Text(
+                      widget.name,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w500),
+                    ),
                   ),
-                  Text(
-                    widget.name,
-                    style: TextStyle(
+                  Padding(
+                    padding: const EdgeInsets.only(right: 50.0),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.compare_arrows,
                         color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w500),
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                        print(privateKey);
+                        print(network);
+                        print(store);
+                        print(address);
+                      },
+                    ),
                   ),
                 ],
               ),

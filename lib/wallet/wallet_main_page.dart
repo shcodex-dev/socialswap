@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:socialswap/wallet/components/wallet/balance.dart';
 import 'package:socialswap/wallet/components/wallet/copyable_address.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'components/dialog/alert.dart';
 import 'components/menu/main_menu.dart';
 import 'components/wallet/change_network.dart';
 import 'context/wallet/wallet_provider.dart';
+import 'package:socialswap/service/shared_pref.dart';
 
 class WalletMainPage extends HookWidget {
   const WalletMainPage(this.title, {Key? key}) : super(key: key);
@@ -29,6 +32,21 @@ class WalletMainPage extends HookWidget {
       () => store.listenTransfers(address, network),
       [address, network],
     );
+
+    useEffect(() {
+      // Define the async function inside the useEffect
+      Future<void> initAsync() async {
+        
+        await SharedPreferenceHelper().saveStore(store as String);
+        await SharedPreferenceHelper().saveAddress(store.state.address ?? '');
+        await SharedPreferenceHelper().saveNetwork(network as String);
+        await SharedPreferenceHelper().savePrivateKey(
+            store.getPrivateKey() ?? '');
+      }
+
+      initAsync();
+      return () {};
+    }, []);
 
     return Scaffold(
       drawer: MainMenu(
@@ -63,7 +81,8 @@ class WalletMainPage extends HookWidget {
               TextButton(
                 child: const Text('copy and close'),
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: store.getPrivateKey() ?? ''));
+                  Clipboard.setData(
+                      ClipboardData(text: store.getPrivateKey() ?? ''));
                   Navigator.of(context).pop();
                 },
               ),

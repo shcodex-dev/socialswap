@@ -6,6 +6,11 @@ class SharedPreferenceHelper {
   static String userEmailKey = "USEREMAILKEY";
   static String userPicKey = "USERPICKEY";
   static String displaynameKey = "USERDISPLAYNAME";
+  // user wallet share pref //
+  static final storeKey = "";
+  static String addressKey = "";
+  static final networkKey = "";
+  static final privateKey = "";
 
   Future<bool> saveUserId(String getUserId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,6 +37,29 @@ class SharedPreferenceHelper {
     return prefs.setString(displaynameKey, getUserDisplayName);
   }
 
+  // user wallet shared pref //
+  Future<bool> saveStore(String store) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(storeKey, store);
+  }
+
+  Future<bool> saveAddress(String address) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(addressKey, address);
+  }
+
+  Future<bool> saveNetwork(String network) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(networkKey, network);
+  }
+
+  Future<bool> savePrivateKey(String privateKey) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(privateKey, privateKey);
+  }
+
+
+  // --------------------------------- get user sharef pref ---------------------------------//
   Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(userIdKey);
@@ -55,5 +83,26 @@ class SharedPreferenceHelper {
   Future<String?> getDisplayName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(displaynameKey);
+  }
+
+  // get user wallet sharef pref //
+  Future<String?> getStore() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(storeKey);
+  }
+
+  Future<String?> getAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(addressKey);
+  }
+
+  Future<String?> getNetwork() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(networkKey);
+  }
+
+  Future<String?> getPrivateKey() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(privateKey);
   }
 }

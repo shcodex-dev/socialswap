@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:socialswap/components/navBar.dart';
 import 'package:socialswap/pages/log_in.dart';
 import 'package:socialswap/service/auth.dart';
+import 'package:socialswap/wallet/wallet_main.dart';
 
 class IO extends StatefulWidget {
   const IO({Key? key}) : super(key: key);
@@ -32,6 +33,7 @@ class _IOState extends State<IO> {
                 } else {
                   if (snapshot.hasData) {
                     return NavBar();
+                    // return MainApp();
                   } else {
                     return LogIn();
                   }

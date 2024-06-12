@@ -5,6 +5,8 @@ import 'package:socialswap/wallet/service/configuration_service.dart';
 import 'package:hex/hex.dart';
 import 'package:web3dart/credentials.dart';
 
+import 'package:socialswap/service/shared_pref.dart';
+
 abstract class IAddressService {
   String generateMnemonic();
   Future<String> getPrivateKey(String mnemonic);
@@ -38,6 +40,7 @@ class AddressService implements IAddressService {
 
     print('private: $privateKey');
 
+    await SharedPreferenceHelper().saveUserPrivateKey(privateKey);
     return privateKey;
   }
 
@@ -46,6 +49,8 @@ class AddressService implements IAddressService {
     final private = EthPrivateKey.fromHex(privateKey);
 
     print('address: ${private.address}');
+    
+    await SharedPreferenceHelper().saveUserAddress(private.address.toString());
 
     return private.address;
   }

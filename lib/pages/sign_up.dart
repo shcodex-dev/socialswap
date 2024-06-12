@@ -94,6 +94,8 @@ class SignUpState extends State<SignUp> {
         await SharedPreferenceHelper().saveUserName(
             _emailController.text.replaceAll("@gmail.com", "").toUpperCase());
 
+        await SharedPreferenceHelper().saveStoreCheck("false");
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

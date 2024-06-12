@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:socialswap/wallet/components/wallet/balance.dart';
 import 'package:socialswap/wallet/components/wallet/copyable_address.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,14 @@ class WalletMainPage extends HookWidget {
     final store = useWallet(context);
     final address = store.state.address;
     final network = store.state.network;
-    String? pk, addr;
+
+    // user wallet pref data //
+    final pk = useState<String?>(null);
+    final addr = useState<String?>(null);
+    final chk = useState<String?>(null);
+
+    // user data //
+    final currentUserID = useState<String?>(null);
 
     useEffect(() {
       store.initialise();
@@ -34,16 +42,57 @@ class WalletMainPage extends HookWidget {
       [address, network],
     );
 
-    // useEffect(() {
-    //   // Define the async function inside the useEffect
-    //   initAsync() async {
-    //     pk = await SharedPreferenceHelper().getPrivateKey();
-    //     addr = await SharedPreferenceHelper().getAddress();
-    //   }
+    useEffect(() {
+      onLoad() async {
+        try {
+          pk.value = await SharedPreferenceHelper().getPrivateKey();
+           addr.value = await SharedPreferenceHelper().getAddress();
+          chk.value = await SharedPreferenceHelper().getStoreCheck();
+          currentUserID.value = await SharedPreferenceHelper().getUserId();
 
-    //   initAsync();
-    //   return () {};
-    // }, []);
+          
+          // Debugging output
+          print(
+              "pk: ${pk.value}, addr: ${addr.value}, chk: ${chk.value}, currentUserID: ${currentUserID.value}");
+
+        } catch (e) {
+          print("Error fetching data from Shared Preferences: $e");
+        }
+
+        try {
+          if(chk.value == "false") {
+            if(addr.value != null && pk.value != null) {
+              
+              // updating current user pk and addr in firebase //
+              try {
+                await FirebaseFirestore.instance.collection("users").doc(currentUserID.value).update({
+                  "address": addr.value,
+                  "privateKey": pk.value
+                });
+              }
+              catch(e) {
+                print("Error updating data in Firebase: $e");
+              }
+              print("updating");
+
+              await SharedPreferenceHelper().saveStoreCheck("true");
+            }
+            else {
+              return;
+            }
+          }
+        }
+        catch (e) {
+          print("Error updating data in Shared Preferences: $e");
+        }
+      }
+
+      store.initialise();
+      onLoad();
+
+
+      return null;
+    }, []);
 
     return Scaffold(
       drawer: MainMenu(
@@ -115,20 +164,21 @@ class WalletMainPage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-            icon: const Icon(Icons.upload),
-            onPressed: () async {
-              pk = await SharedPreferenceHelper().getPrivateKey();
-              addr = await SharedPreferenceHelper().getAddress();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.downloading),
-            onPressed: () async {
-              print("addr: $addr");
-              print("pk: $pk");
-            },
-          ),
+            // IconButton(
+            //   icon: const Icon(Icons.upload),
+            //   onPressed: () async {
+            //     chk.value = await SharedPreferenceHelper().getStoreCheck();
+            //   },
+            // ),
+            // IconButton(
+            //   icon: const Icon(Icons.downloading),
+            //   onPressed: () async {
+            //     print("addr: ${addr.value}");
+            //     print("pk: ${pk.value}");
+            //     print("id: ${currentUserID.value}");
+            //     print("chk: ${chk.value}");
+            //   },
+            // ),
             ChangeNetwork(
               onChange: store.changeNetwork,
               currentValue: store.state.network,

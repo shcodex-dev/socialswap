@@ -151,4 +151,17 @@ class DatabaseMethods {
 
     return querySnapshot.docs.isNotEmpty;
   }
+
+  // getUserByUserId //
+  Future getUserByUserId(String userId) async {
+    return await FirebaseFirestore.instance.collection("users").doc(userId).get();
+  }
+
+  // updateUser //
+  Future updateUser(String userId, Map<String, dynamic> userInfoMap) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .update(userInfoMap);
+  }
 }

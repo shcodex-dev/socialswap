@@ -11,6 +11,10 @@ class SharedPreferenceHelper {
   static String userAddressKey = "USERADDRESSKEY";
   static String userPrivateKey = "USERPRIVATEKEY";
 
+  static String storeCheckKey = "STORECHECKKEY";
+
+  // --------------------------------- save user sharef pref ---------------------------------//
+
   Future<bool> saveUserId(String getUserId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(userIdKey, getUserId);
@@ -36,6 +40,8 @@ class SharedPreferenceHelper {
     return prefs.setString(displaynameKey, getUserDisplayName);
   }
 
+
+
   // user wallet shared pref //
   Future<bool> saveUserAddress(String address) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,6 +51,11 @@ class SharedPreferenceHelper {
   Future<bool> saveUserPrivateKey(String privateK) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(userPrivateKey, privateK);
+  }
+
+  Future<bool> saveStoreCheck(String storeCheck) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(storeCheckKey, storeCheck);
   }
 
 
@@ -75,16 +86,18 @@ class SharedPreferenceHelper {
   }
 
   // get user wallet sharef pref //
-
-
   Future<String?> getAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(userAddressKey);
   }
 
-
   Future<String?> getPrivateKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(userPrivateKey);
+  }
+
+  Future<String?> getStoreCheck() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(storeCheckKey);
   }
 }

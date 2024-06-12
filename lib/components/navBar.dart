@@ -42,6 +42,7 @@ class _NavBarState extends State<NavBar> {
           onTap: ((value) {
             setState(() {
               _currentIndex = value;
+              
             });
           }),
           items: [

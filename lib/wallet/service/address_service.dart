@@ -51,6 +51,7 @@ class AddressService implements IAddressService {
     print('address: ${private.address}');
     
     await SharedPreferenceHelper().saveUserAddress(private.address.toString());
+
     return private.address;
   }
 

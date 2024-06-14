@@ -119,6 +119,27 @@ class LogInState extends State<LogIn> {
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Column(
                   children: [
+                    Center(child: Image.asset(
+                      "assets/image/logo.png",
+                      height: 100.0,
+                      width: 100.0,
+                    ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Center(
+                      child: Text(
+                        "Your Crypto Companion",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 181, 181, 181),
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500,),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
                     Center(
                       child: Text(
                         "Log In",
@@ -150,7 +171,7 @@ class LogInState extends State<LogIn> {
                         borderRadius: BorderRadius.circular(10),
                         child: SingleChildScrollView(
                           child: Container(
-                            height: MediaQuery.of(context).size.height / 2,
+                            height: MediaQuery.of(context).size.height / 2.2,
                             width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                                 color: Colors.white,

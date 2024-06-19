@@ -49,6 +49,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '877804633592',
     projectId: 'socail-swap',
     authDomain: 'socail-swap.firebaseapp.com',
+    databaseURL:
+        "https://socail-swap-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: 'socail-swap.appspot.com',
   );
 
@@ -57,6 +59,8 @@ class DefaultFirebaseOptions {
     appId: '1:877804633592:android:f061ae3c4b17d59efd2a0d',
     messagingSenderId: '877804633592',
     projectId: 'socail-swap',
+    databaseURL:
+        "https://socail-swap-default-rtdb.asia-southeast1.firebasedatabase.app",
     storageBucket: 'socail-swap.appspot.com',
   );
 
@@ -67,6 +71,8 @@ class DefaultFirebaseOptions {
     projectId: 'socail-swap',
     storageBucket: 'socail-swap.appspot.com',
     iosBundleId: 'com.example.socialswap',
+    databaseURL:
+        "https://socail-swap-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,5 +82,7 @@ class DefaultFirebaseOptions {
     projectId: 'socail-swap',
     storageBucket: 'socail-swap.appspot.com',
     iosBundleId: 'com.example.socialswap.RunnerTests',
+    databaseURL:
+        "https://socail-swap-default-rtdb.asia-southeast1.firebasedatabase.app",
   );
 }

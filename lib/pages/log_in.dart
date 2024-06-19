@@ -120,12 +120,21 @@ class LogInState extends State<LogIn> {
                 child: Column(
                   children: [
                     Center(
-                      child: Text(
-                        "Log In",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Soical Swap",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Image.asset(
+                            'assets/image/logo.png',
+                            height: 100.0,
+                            width: 100.0,
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(
@@ -133,9 +142,9 @@ class LogInState extends State<LogIn> {
                     ),
                     Center(
                       child: Text(
-                        "Log In to your Account",
+                        "Your Crypto Companion",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 181, 181, 181),
+                            color: Color.fromARGB(255, 206, 204, 204),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w500),
                       ),
@@ -148,67 +157,65 @@ class LogInState extends State<LogIn> {
                       child: Material(
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(10),
-                        child: SingleChildScrollView(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height / 2,
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 30.0, horizontal: 20.0),
+                        child: Container(
+                          height: 405,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 30.0, horizontal: 20.0),
 
-                            // Text Fields //
-                            child: Form(
-                              key: _formkey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 40.0,
-                                  ),
-                                  // Label and Input field for Email //
-                                  resuedTextField("Email", Icons.mail_outline,
-                                      false, _emailController),
-                                  SizedBox(
-                                    height: 20.0,
-                                  ),
-                                  // Label and Input field for Password //
-                                  resuedTextField(
-                                      "Password",
-                                      Icons.password_outlined,
-                                      true,
-                                      _passwordController),
+                          // Text Fields //
+                          child: Form(
+                            key: _formkey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 40.0,
+                                ),
+                                // Label and Input field for Email //
+                                resuedTextField("Email", Icons.mail_outline,
+                                    false, _emailController),
+                                SizedBox(
+                                  height: 20.0,
+                                ),
+                                // Label and Input field for Password //
+                                resuedTextField(
+                                    "Password",
+                                    Icons.password_outlined,
+                                    true,
+                                    _passwordController),
 
-                                  SizedBox(
-                                    height: 30.0,
-                                  ),
-                                  // Forgot Password //
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ForgotPassword()));
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.bottomRight,
-                                      child: Text(
-                                        "Forgot Password?",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.w500),
-                                      ),
+                                SizedBox(
+                                  height: 30.0,
+                                ),
+                                // Forgot Password //
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgotPassword()));
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ),
+                                ),
 
-                                  SizedBox(
-                                    height: 35.0,
-                                  ),
-                                ],
-                              ),
+                                SizedBox(
+                                  height: 35.0,
+                                ),
+                              ],
                             ),
                           ),
                         ),

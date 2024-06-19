@@ -33,7 +33,6 @@ class _IOState extends State<IO> {
                 } else {
                   if (snapshot.hasData) {
                     return NavBar();
-                    // return MainApp();
                   } else {
                     return LogIn();
                   }
@@ -71,14 +70,10 @@ class _IOState extends State<IO> {
                       color: Colors.black,
                       fontWeight: FontWeight.bold),
                 ),
-                Container(
-                  child: Column(children: [
-                    Image.asset(
-                      'assets/image/logo.png',
-                      height: 300.0,
-                      width: 300.0,
-                    ),
-                  ]),
+                Image.asset(
+                  'assets/image/logo.png',
+                  height: 300.0,
+                  width: 300.0,
                 ),
                 Column(
                   children: [

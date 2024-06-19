@@ -43,7 +43,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           child: Stack(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height / 3.0,
+                height: MediaQuery.of(context).size.height / 2.0,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -64,12 +64,21 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 child: Column(
                   children: [
                     Center(
-                      child: Text(
-                        "Password Recovery",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Soical Swap",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Image.asset(
+                            'assets/image/logo.png',
+                            height: 100.0,
+                            width: 100.0,
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(
@@ -77,14 +86,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     ),
                     Center(
                       child: Text(
-                        "Enter your Email",
+                        "Your Crypto Companion",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 197, 197, 197),
+                            color: Color.fromARGB(255, 206, 204, 204),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w500),
                       ),
                     ),
-
                     // Laviated Box //
                     Container(
                       margin: EdgeInsets.symmetric(
@@ -93,7 +101,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
-                          height: MediaQuery.of(context).size.height / 2.5,
+                          height: 400,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,

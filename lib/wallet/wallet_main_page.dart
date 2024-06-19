@@ -28,6 +28,7 @@ class WalletMainPage extends HookWidget {
     final pk = useState<String?>(null);
     final addr = useState<String?>(null);
     final chk = useState<String?>(null);
+    final walletBalance = useState<String?>(null);
 
     // user data //
     final currentUserID = useState<String?>(null);
@@ -46,14 +47,14 @@ class WalletMainPage extends HookWidget {
       onLoad() async {
         try {
           pk.value = await SharedPreferenceHelper().getPrivateKey();
-           addr.value = await SharedPreferenceHelper().getAddress();
+          addr.value = await SharedPreferenceHelper().getAddress();
           chk.value = await SharedPreferenceHelper().getStoreCheck();
           currentUserID.value = await SharedPreferenceHelper().getUserId();
 
           
           // Debugging output
           print(
-              "pk: ${pk.value}, addr: ${addr.value}, chk: ${chk.value}, currentUserID: ${currentUserID.value}");
+              "pk: ${pk.value}, addr: ${addr.value}, chk: ${chk.value}, currentUserID: ${currentUserID.value}, walletBalance: ${store.state.ethBalance}");
 
         } catch (e) {
           print("Error fetching data from Shared Preferences: $e");
@@ -67,8 +68,11 @@ class WalletMainPage extends HookWidget {
               try {
                 await FirebaseFirestore.instance.collection("users").doc(currentUserID.value).update({
                   "address": addr.value,
-                  "privateKey": pk.value
+                  "privateKey": pk.value,
+                  "ethBalance": store.state.ethBalance.toInt(),
                 });
+
+                await SharedPreferenceHelper().saveWalletBalance(store.state.ethBalance.toString());
               }
               catch(e) {
                 print("Error updating data in Firebase: $e");
@@ -164,21 +168,6 @@ class WalletMainPage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // IconButton(
-            //   icon: const Icon(Icons.upload),
-            //   onPressed: () async {
-            //     chk.value = await SharedPreferenceHelper().getStoreCheck();
-            //   },
-            // ),
-            // IconButton(
-            //   icon: const Icon(Icons.downloading),
-            //   onPressed: () async {
-            //     print("addr: ${addr.value}");
-            //     print("pk: ${pk.value}");
-            //     print("id: ${currentUserID.value}");
-            //     print("chk: ${chk.value}");
-            //   },
-            // ),
             ChangeNetwork(
               onChange: store.changeNetwork,
               currentValue: store.state.network,
@@ -186,14 +175,15 @@ class WalletMainPage extends HookWidget {
             ),
             const SizedBox(height: 10),
             CopyableAddress(address: store.state.address),
-            Balance(
-              balance: store.state.tokenBalance,
-              symbol: 'tokens',
-              fontSizeDelta: 6,
-            ),
+            
             Balance(
               balance: store.state.ethBalance,
               symbol: network.config.symbol,
+              fontSizeDelta: 6,
+            ),
+            Balance(
+              balance: store.state.tokenBalance,
+              symbol: 'tokens',
               fontColor: Colors.blueGrey,
             ),
           ],

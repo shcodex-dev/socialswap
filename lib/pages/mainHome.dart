@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables, body_might_complete_normally_nullable, prefer_is_empty, sized_box_for_whitespace, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
 import 'package:socialswap/components/item.dart';
 import 'package:socialswap/models/coin.dart';
 import 'package:socialswap/pages/Recommendpage.dart';
 import 'package:socialswap/pages/prediction.dart';
+import 'package:socialswap/service/shared_pref.dart';
+import 'package:socialswap/wallet/wallet_main.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
@@ -24,6 +27,8 @@ class _MainHomeState extends State<MainHome> {
   // coin market list
   List? coinMarket = [];
   var coinMarketList;
+
+  String chk = '';
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +93,18 @@ class _MainHomeState extends State<MainHome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '\$ 7,466.20',
-                    style: TextStyle(fontSize: 35),
-                  ),
+                  chk == "false"
+                      ? IconButton(
+                          icon: const Icon(Icons.add, size: 50.0,), onPressed: () {
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MainApp()));
+                          })
+                      : Text(
+                          '\$ 0.00',
+                          style: TextStyle(fontSize: 35),
+                        ),
                   Container(
                     padding: EdgeInsets.all(myWidth * 0.02),
                     width: myWidth * 0.1,
@@ -200,6 +213,8 @@ class _MainHomeState extends State<MainHome> {
   bool isRefreshing = true;
 
   Future<List<Coin>?> getCoinMarket() async {
+    chk = (await SharedPreferenceHelper().getStoreCheck())!;
+
     const url =
         'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
 
@@ -214,6 +229,7 @@ class _MainHomeState extends State<MainHome> {
     setState(() {
       isRefreshing = false;
     });
+
 
     if (response.statusCode == 200) {
       var x = response.body;

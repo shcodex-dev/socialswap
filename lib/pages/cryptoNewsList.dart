@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'dart:io';
 
 import 'package:readmore/readmore.dart';
 
@@ -20,6 +23,7 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
   @override
   void initState() {
     super.initState();
+    loadFromFile();
     getNews();
   }
 
@@ -38,7 +42,7 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
 
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
-
+        await saveToFile(response.body);
         // setState(() {
         //   newsItems = responseData;
         // });
@@ -62,10 +66,102 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
           }).toList();
         });
       } else {
-        throw Exception('Failed to load data');
+        print('Failed to load data');
+        await loadFromFile();
       }
     } catch (error) {
       print(error);
+      await loadFromFile();
+    }
+  }
+
+  Future<void> saveToFile(String data) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = path.join(directory.path, 'data.json');
+    final file = File(filePath);
+    await file.writeAsString(data);
+    print('Save to Local data file found++++++++++++++++++++++++++++++++++');
+  }
+
+  Future<bool> fileExitsData() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = path.join(directory.path, 'data.json');
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final fileContent = await file.readAsString();
+        List<dynamic> responseData = jsonDecode(fileContent);
+
+        // Create a list to store the news items
+        List<Map<String, String>> localNewsItems = responseData.map((item) {
+          final String heading = item['name'] ?? '';
+          final dynamic links = item['links'];
+          final String source = links != null &&
+                  links['website'] != null &&
+                  links['website'].isNotEmpty
+              ? links['website'][0]
+              : '';
+          final String description = item['description'] ?? '';
+
+          return {
+            'heading': heading,
+            'source': source,
+            'description': description,
+          };
+        }).toList();
+
+        // Update the state
+        setState(() {
+          print(
+              'Read from Local data file found++++++++++++++++++++++++++++++++++');
+          newsItems = localNewsItems;
+        });
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<void> loadFromFile() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = path.join(directory.path, 'data.json');
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final fileContent = await file.readAsString();
+        List<dynamic> responseData = jsonDecode(fileContent);
+
+        setState(() {
+          print(
+              'REad from Local data file found++++++++++++++++++++++++++++++++++');
+          newsItems = responseData.map((item) {
+            final String heading = item['name'] ?? '';
+            final dynamic links = item['links'];
+            final String source = links != null &&
+                    links['website'] != null &&
+                    links['website'].isNotEmpty
+                ? links['website'][0]
+                : '';
+            final String description = item['description'] ?? '';
+
+            return {
+              'heading': heading,
+              'source': source,
+              'description': description,
+            };
+          }).toList();
+        });
+      } else {
+        print('Local data file not found');
+      }
+    } catch (error) {
+      print('Failed to load local data: $error');
     }
   }
 
@@ -73,27 +169,6 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final myHeight = MediaQuery.of(context).size.height;
-    Widget CryptoNewsHeading() {
-      return Container(
-        margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-        width: screenWidth * 0.9,
-        decoration: BoxDecoration(
-            color: Color(0xffC4C4C4),
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20))),
-        height: screenWidth * 0.12,
-        child: Center(
-          child: Text(
-            'Latest Cryptocurrency News',
-            style: TextStyle(
-                fontFamily: 'comfortaa',
-                fontSize: screenWidth * 0.055,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-    }
 
     Future<void> _launchUrl(Uri url) async {
       if (!await launchUrl(url)) {
@@ -228,7 +303,7 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
                                 ),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.only(top:30.0),
+                                padding: const EdgeInsets.only(top: 30.0),
                                 child: StreamBuilder(
                                   stream: streamOfNews(),
                                   builder: (context, snapshot) {

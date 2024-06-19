@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:socialswap/components/item.dart';
 import 'package:socialswap/models/coin.dart';
 import 'package:socialswap/pages/Recommendpage.dart';
+import 'package:socialswap/pages/prediction.dart';
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
@@ -97,21 +98,22 @@ class _MainHomeState extends State<MainHome> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.5)),
-                    child: Image.asset(
-                      'assets/icons/5.1.png',
+                    child: GestureDetector(
+                      onTap: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SignalsPage()))
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 2, right: 2),
+                        child: Image.asset(
+                          'assets/icons/5.1.png',
+                          height: myHeight * 0.05,
+                        ),
+                      ),
                     ),
                   )
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: myWidth * 0.07),
-              child: Row(
-                children: [
-                  Text(
-                    '+162% all time',
-                    style: TextStyle(fontSize: 16),
-                  ),
                 ],
               ),
             ),
@@ -119,7 +121,7 @@ class _MainHomeState extends State<MainHome> {
               height: myHeight * 0.02,
             ),
             Container(
-              height: 510,
+              height: myHeight * 0.6,
               width: myWidth,
               decoration: BoxDecoration(
                 boxShadow: [
@@ -149,7 +151,6 @@ class _MainHomeState extends State<MainHome> {
                           'Assets',
                           style: TextStyle(fontSize: 20),
                         ),
-                        Icon(Icons.add)
                       ],
                     ),
                   ),
@@ -176,7 +177,7 @@ class _MainHomeState extends State<MainHome> {
                               )
                             : SingleChildScrollView(
                                 child: ListView.builder(
-                                  itemCount: 4,
+                                  itemCount: 3,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
@@ -217,7 +218,6 @@ class _MainHomeState extends State<MainHome> {
     if (response.statusCode == 200) {
       var x = response.body;
 
-     
       try {
         coinMarketList = coinFromJson(x);
       } catch (e) {

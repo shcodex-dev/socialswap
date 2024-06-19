@@ -184,20 +184,20 @@ class _ChatPageState extends State<ChatPage> {
                           fontWeight: FontWeight.w500),
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(right: 50.0),
-                  //   child: IconButton(
-                  //     icon: const Icon(
-                  //       Icons.compare_arrows,
-                  //       color: Colors.white,
-                  //       size: 30.0,
-                  //     ),
-                  //     onPressed: () {
-                  //      print("address sp: $userAddress");
-                  //      print("privateKey sp: $userPrivateKey");
-                  //     },
-                  //   ),
-                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 50.0),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.compare_arrows,
+                        color: Colors.white,
+                        size: 30.0,
+                      ),
+                      onPressed: () {
+                       print("address sp: $userAddress");
+                       print("privateKey sp: $userPrivateKey");
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

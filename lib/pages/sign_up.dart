@@ -174,12 +174,21 @@ class SignUpState extends State<SignUp> {
                 child: Column(
                   children: [
                     Center(
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Soical Swap",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Image.asset(
+                            'assets/image/logo.png',
+                            height: 100.0,
+                            width: 100.0,
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(
@@ -187,9 +196,9 @@ class SignUpState extends State<SignUp> {
                     ),
                     Center(
                       child: Text(
-                        "Create a New Account",
+                        "Your Crypto Companion",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 218, 218, 218),
+                            color: Color.fromARGB(255, 206, 204, 204),
                             fontSize: 18.0,
                             fontWeight: FontWeight.w500),
                       ),

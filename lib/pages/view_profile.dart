@@ -78,7 +78,7 @@ class _ViewProfileState extends State<ViewProfile> {
                   GestureDetector(
                     onTap: () {
                       AuthMethods().logout();
-                      Navigator.push(context,
+                      Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) => LogIn()));
                     },
                     child: Container(

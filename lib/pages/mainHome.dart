@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables, body_might_complete_normally_nullable, prefer_is_empty, sized_box_for_whitespace, avoid_print
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +30,7 @@ class _MainHomeState extends State<MainHome> {
   var coinMarketList;
 
   String chk = '';
+  var chkLogin = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +95,7 @@ class _MainHomeState extends State<MainHome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  chk == "false"
+                  chk == "false"  || chkLogin == -1
                       ? IconButton(
                           icon: const Icon(Icons.add, size: 50.0,), onPressed: () {
                             Navigator.push(
@@ -214,6 +216,10 @@ class _MainHomeState extends State<MainHome> {
 
   Future<List<Coin>?> getCoinMarket() async {
     chk = (await SharedPreferenceHelper().getStoreCheck())!;
+    chkLogin = (await SharedPreferenceHelper().getWalletBalance())! as int;
+
+    print(chkLogin);
+
 
     const url =
         'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';

@@ -19,7 +19,7 @@ class LogIn extends StatefulWidget {
 }
 
 class LogInState extends State<LogIn> {
-  String email = "", password = "", name = "", pic = "", username = "", id = "";
+  String email = "", password = "", name = "", pic = "", username = "", id = "", address = "", privateKey = "", balance = "";
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -38,12 +38,54 @@ class LogInState extends State<LogIn> {
       username = "${querySnapshot.docs[0]["username"]}";
       pic = "${querySnapshot.docs[0]["Photo"]}";
       id = querySnapshot.docs[0].id;
+      try {
+
+        if (
+          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("address") &&
+          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("privateKey") &&
+          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("ethBalance") 
+        ) {
+          address = "${querySnapshot.docs[0]["address"]}";
+          privateKey = "${querySnapshot.docs[0]["privateKey"]}";
+          balance = "${querySnapshot.docs[0]["ethBalance"]}";
+        }
+        else {
+          address = "";
+          privateKey = "";
+          balance = "";
+        }
+        
+        
+      }
+      catch (e) {
+        print("Error fetching data from data base: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text(
+              'Error fetching data from data base',
+              style: TextStyle(fontSize: 18.0, color: Colors.black),
+            ),
+          ),
+        );
+        setState(() {
+          btnState = false;
+        });
+        return;
+      }
+
 
       await SharedPreferenceHelper().saveUserDisplayName(name);
       await SharedPreferenceHelper().saveUserName(username);
       await SharedPreferenceHelper().saveUserId(id);
       await SharedPreferenceHelper().saveUserPic(pic);
       await SharedPreferenceHelper().saveUserEmail(email);
+
+      // saving user address, private key and balance //
+      await SharedPreferenceHelper().saveUserAddress(address);
+      await SharedPreferenceHelper().saveUserPrivateKey(privateKey);
+      await SharedPreferenceHelper().saveWalletBalance(balance);
+
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => NavBar()));

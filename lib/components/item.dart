@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class Item extends StatelessWidget {
   var item;
-  Item({this.item});
+  var bal;
+  Item({this.item, this.bal});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class Item extends StatelessWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    '0.4 ' + item.symbol,
+                    bal + " " + item.symbol,
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.normal,

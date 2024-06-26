@@ -7,7 +7,6 @@ class AuthMethods {
     return await auth.currentUser;
   }
 
-
   Future<void> logout() async {
     await auth.signOut();
   }

@@ -6,8 +6,6 @@ import 'package:socialswap/wallet/components/wallet/copyable_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-
-import 'components/dialog/alert.dart';
 import 'components/menu/main_menu.dart';
 import 'components/wallet/change_network.dart';
 import 'context/wallet/wallet_provider.dart';
@@ -51,49 +49,46 @@ class WalletMainPage extends HookWidget {
           chk.value = await SharedPreferenceHelper().getStoreCheck();
           currentUserID.value = await SharedPreferenceHelper().getUserId();
 
-          
           // Debugging output
           print(
               "pk: ${pk.value}, addr: ${addr.value}, chk: ${chk.value}, currentUserID: ${currentUserID.value}, walletBalance: ${store.state.ethBalance}");
-
         } catch (e) {
           print("Error fetching data from Shared Preferences: $e");
         }
 
         try {
-          if(chk.value == "false") {
-            if(addr.value != null && pk.value != null) {
-              
-              // updating current user pk and addr in firebase //
+          if (chk.value == "false") {
+            if (addr.value != null && pk.value != null) {
               try {
-                await FirebaseFirestore.instance.collection("users").doc(currentUserID.value).update({
+                await FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(currentUserID.value)
+                    .update({
                   "address": addr.value,
                   "privateKey": pk.value,
-                  "ethBalance": store.state.ethBalance.toInt(),
+                  "ethBalance": store.state.ethBalance.toDouble(),
                 });
 
-                await SharedPreferenceHelper().saveWalletBalance(store.state.ethBalance.toString());
-              }
-              catch(e) {
+                await SharedPreferenceHelper()
+                    .saveWalletBalance(store.state.ethBalance.toString());
+              } catch (e) {
                 print("Error updating data in Firebase: $e");
               }
-              print("updating");
 
               await SharedPreferenceHelper().saveStoreCheck("true");
-            }
-            else {
+              await SharedPreferenceHelper()
+                  .saveWalletBalance(store.state.ethBalance.toString());
+            } else {
               return;
             }
           }
-        }
-        catch (e) {
+        } catch (e) {
           print("Error updating data in Shared Preferences: $e");
         }
       }
 
       store.initialise();
       onLoad();
-
 
       return null;
     }, []);
@@ -102,41 +97,72 @@ class WalletMainPage extends HookWidget {
       drawer: MainMenu(
         network: network,
         address: address,
-        onReset: () => Alert(
-            title: 'Warning',
-            text:
-                'Without your seed phrase or private key you cannot restore your wallet balance',
-            actions: [
-              TextButton(
-                child: const Text('cancel'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              TextButton(
-                child: const Text('reset'),
-                onPressed: () async {
-                  await store.resetWallet();
-                  Navigator.popAndPushNamed(context, '/');
-                },
-              )
-            ]).show(context),
-        onRevealKey: () => Alert(
-            title: 'Private key',
-            text:
-                'WARNING: In production environment the private key should be protected with password.\r\n\r\n${store.getPrivateKey() ?? "-"}',
-            actions: [
-              TextButton(
-                child: const Text('close'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              TextButton(
-                child: const Text('copy and close'),
-                onPressed: () {
-                  Clipboard.setData(
-                      ClipboardData(text: store.getPrivateKey() ?? ''));
-                  Navigator.of(context).pop();
-                },
-              ),
-            ]).show(context),
+        onReset: () => showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text('Warning'),
+              content: Text(
+                  'Without your seed phrase or private key you cannot restore your wallet balance'),
+              actions: [
+                TextButton(
+                  child: const Text('cancel'),
+                  onPressed: () => Navigator.of(dialogContext)
+                      .pop(), // Use dialogContext here
+                ),
+                TextButton(
+                  child: const Text('reset'),
+                  onPressed: () async {
+                    await store.resetWallet();
+                    Navigator.popAndPushNamed(context, '/');
+                    try {
+                      await FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(currentUserID.value)
+                          .update({
+                        "address": "",
+                        "privateKey": "",
+                        "ethBalance": 0.0,
+                      });
+
+                      await SharedPreferenceHelper()
+                          .saveWalletBalance(store.state.ethBalance.toString());
+                    } catch (e) {
+                      print("Error updating data in Firebase: $e");
+                    }
+                    await SharedPreferenceHelper().saveStoreCheck("false");
+                    await SharedPreferenceHelper().saveWalletBalance("0.0");
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        onRevealKey: () => showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text('Private key'),
+              content: Text(
+                  'WARNING: In production environment the private key should be protected with password.\r\n\r\n${store.getPrivateKey() ?? "-"}'),
+              actions: [
+                TextButton(
+                  child: const Text('close'),
+                  onPressed: () => Navigator.of(dialogContext)
+                      .pop(), // Use dialogContext here
+                ),
+                TextButton(
+                  child: const Text('copy and close'),
+                  onPressed: () {
+                    Clipboard.setData(
+                        ClipboardData(text: store.getPrivateKey() ?? ''));
+                    Navigator.of(dialogContext).pop(); // Use dialogContext here
+                  },
+                ),
+              ],
+            );
+          },
+        ),
       ),
       appBar: AppBar(
         title: Text(title),
@@ -168,14 +194,8 @@ class WalletMainPage extends HookWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ChangeNetwork(
-              onChange: store.changeNetwork,
-              currentValue: store.state.network,
-              loading: store.state.loading,
-            ),
             const SizedBox(height: 10),
             CopyableAddress(address: store.state.address),
-            
             Balance(
               balance: store.state.ethBalance,
               symbol: network.config.symbol,

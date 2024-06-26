@@ -65,6 +65,10 @@ class Coin {
     required this.roi,
   });
 
+  double GetCurrentValue() {
+    return currentPrice;
+  }
+
   factory Coin.fromJson(Map<String, dynamic> json) => Coin(
         id: json["id"],
         symbol: json["symbol"],

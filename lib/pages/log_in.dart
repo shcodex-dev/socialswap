@@ -1,5 +1,6 @@
 // ignore_for_file: sized_box_for_whitespace, use_build_context_synchronously, prefer_final_fields, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:socialswap/pages/emailverification.dart';
 import 'package:socialswap/pages/forgotpassword.dart';
 import 'package:socialswap/pages/sign_up.dart';
 import 'package:socialswap/components/reuseable_widgets.dart';
@@ -19,7 +20,14 @@ class LogIn extends StatefulWidget {
 }
 
 class LogInState extends State<LogIn> {
-  String email = "", password = "", name = "", pic = "", username = "", id = "", address = "", privateKey = "", balance = "";
+  String email = "",
+      password = "",
+      name = "",
+      pic = "",
+      username = "",
+      id = "",
+      privatekey = "",
+      address = "";
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -29,7 +37,7 @@ class LogInState extends State<LogIn> {
 
   userLogin() async {
     try {
-      await FirebaseAuth.instance
+      UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       QuerySnapshot querySnapshot =
           await DatabaseMethods().getUserbyemail(email);
@@ -38,57 +46,35 @@ class LogInState extends State<LogIn> {
       username = "${querySnapshot.docs[0]["username"]}";
       pic = "${querySnapshot.docs[0]["Photo"]}";
       id = querySnapshot.docs[0].id;
-      try {
-
-        if (
-          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("address") &&
-          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("privateKey") &&
-          (querySnapshot.docs[0].data() as Map<String, dynamic>).containsKey("ethBalance") 
-        ) {
-          address = "${querySnapshot.docs[0]["address"]}";
-          privateKey = "${querySnapshot.docs[0]["privateKey"]}";
-          balance = "${querySnapshot.docs[0]["ethBalance"]}";
-        }
-        else {
-          address = "";
-          privateKey = "";
-          balance = "";
-        }
-        
-        
-      }
-      catch (e) {
-        print("Error fetching data from data base: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.orangeAccent,
-            content: Text(
-              'Error fetching data from data base',
-              style: TextStyle(fontSize: 18.0, color: Colors.black),
-            ),
-          ),
-        );
-        setState(() {
-          btnState = false;
-        });
-        return;
-      }
-
+      privatekey = "${querySnapshot.docs[0]["privateKey"]}";
+      address = "${querySnapshot.docs[0]["address"]}";
 
       await SharedPreferenceHelper().saveUserDisplayName(name);
       await SharedPreferenceHelper().saveUserName(username);
       await SharedPreferenceHelper().saveUserId(id);
       await SharedPreferenceHelper().saveUserPic(pic);
       await SharedPreferenceHelper().saveUserEmail(email);
+      User? user = userCredential.user;
+      if (user != null && user.emailVerified) {
+        print("Emai is verified");
 
-      // saving user address, private key and balance //
-      await SharedPreferenceHelper().saveUserAddress(address);
-      await SharedPreferenceHelper().saveUserPrivateKey(privateKey);
-      await SharedPreferenceHelper().saveWalletBalance(balance);
-
-
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => NavBar()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavBar()),
+        );
+      } else if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EmailVerificationPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              backgroundColor: Colors.orangeAccent,
+              content: Text('Please verify your email to log in.')),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -153,8 +139,9 @@ class LogInState extends State<LogIn> {
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.vertical(
-                      bottom: Radius.elliptical(
-                          MediaQuery.of(context).size.width, 105.0)),
+                    bottom: Radius.elliptical(
+                        MediaQuery.of(context).size.width, 105.0),
+                  ),
                 ),
               ),
               Padding(
@@ -200,7 +187,7 @@ class LogInState extends State<LogIn> {
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
-                          height: 405,
+                          height: 432,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,

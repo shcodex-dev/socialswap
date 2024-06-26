@@ -43,9 +43,6 @@ class _CryptoNewsListState extends State<CryptoNewsList> {
       if (response.statusCode == 200) {
         List<dynamic> responseData = jsonDecode(response.body);
         await saveToFile(response.body);
-        // setState(() {
-        //   newsItems = responseData;
-        // });
 
         setState(() {
           newsItems = responseData.map((item) {

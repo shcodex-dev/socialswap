@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:random_string/random_string.dart';
 
-
 class ChatPage extends StatefulWidget {
   String name, profileurl, username;
   ChatPage(
@@ -34,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
     // user waller pref //
     userAddress = await SharedPreferenceHelper().getAddress();
     userPrivateKey = await SharedPreferenceHelper().getPrivateKey();
-
+    
     chatRoomId = getChatRoomIdbyUsername(widget.username, myUserName!);
     setState(() {});
   }
@@ -194,9 +193,8 @@ class _ChatPageState extends State<ChatPage> {
                         size: 30.0,
                       ),
                       onPressed: () {
-                                  
-                        // print("address sp: $userAddress");
-                        // print("privateKey sp: $userPrivateKey");
+                       print("address sp: $userAddress");
+                       print("privateKey sp: $userPrivateKey");
                       },
                     ),
                   ),

@@ -28,11 +28,28 @@ class _SignalsPageState extends State<SignalsPage> {
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "ETH",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold),
+                ),
+                Image(
+                  image: NetworkImage(
+                      'https://coin-images.coingecko.com/coins/images/279/large/ethereum.png'),
+                  height: myWidth * 0.1,
+                ),
+              ],
+            ),
             SizedBox(
               height: myHeight * 0.04,
             ),
             Container(
-              height: myHeight * 0.85,
+              height: myHeight * 0.80,
               width: myWidth,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -53,18 +70,15 @@ class _SignalsPageState extends State<SignalsPage> {
                           snapshot.data!.snapshot.value as dynamic;
                       List<dynamic> signals = map['data'];
 
-                      // Sort the signals by timestamp
-                      signals.sort((a, b) {
-                        DateTime dateA = DateTime.parse(a['timestamp']);
-                        DateTime dateB = DateTime.parse(b['timestamp']);
-                        return dateA.compareTo(dateB);
-                      });
+                      signals = signals.take(15).toList().reversed.toList();
 
                       List<FlSpot> buySpots = [];
                       List<FlSpot> sellSpots = [];
+                      List<FlSpot> holdSpots = [];
                       List<FlSpot> emaSpots = [];
                       List<FlSpot> priceSpots = [];
                       List<String> dates = [];
+                      List<String> hours = [];
 
                       double minY = double.infinity;
                       double maxY = double.negativeInfinity;
@@ -75,9 +89,11 @@ class _SignalsPageState extends State<SignalsPage> {
                         double price = signal['price'];
                         String type = signal['type'];
                         String timestamp = signal['timestamp'];
-                        DateTime date = DateTime.parse(timestamp);
-                        dates.add(DateFormat('MM-dd HH:mm').format(date));
-
+                        DateTime date = DateTime.parse(timestamp)
+                            .toUtc()
+                            .add(Duration(hours: 12));
+                        dates.add(DateFormat('MM-dd').format(date));
+                        hours.add(DateFormat('HH').format(date));
                         emaSpots.add(FlSpot(index.toDouble(), ema));
                         priceSpots.add(FlSpot(index.toDouble(), price));
 
@@ -85,6 +101,8 @@ class _SignalsPageState extends State<SignalsPage> {
                           buySpots.add(FlSpot(index.toDouble(), price));
                         } else if (type == 's') {
                           sellSpots.add(FlSpot(index.toDouble(), price));
+                        } else if (type == 'h') {
+                          holdSpots.add(FlSpot(index.toDouble(), price));
                         }
 
                         if (price < minY) minY = price;
@@ -101,7 +119,7 @@ class _SignalsPageState extends State<SignalsPage> {
                       maxY += padding;
 
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(18.0),
                         child: Column(
                           children: [
                             Expanded(
@@ -117,19 +135,54 @@ class _SignalsPageState extends State<SignalsPage> {
                                           return Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 8.0),
-                                            child: Text(
-                                              dates[value.toInt()],
-                                              style: TextStyle(fontSize: 10),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    hours[value.toInt()],
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    dates[value.toInt()],
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
-                                        interval: (dates.length / 5).toDouble(),
+                                        interval:
+                                            (dates.length / 15).toDouble(),
                                       ),
                                     ),
                                     leftTitles: AxisTitles(
                                       sideTitles: SideTitles(
+                                        showTitles: false,
+                                      ),
+                                    ),
+                                    topTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: false,
+                                      ),
+                                    ),
+                                    rightTitles: AxisTitles(
+                                      sideTitles: SideTitles(
                                         showTitles: true,
-                                        interval: 500,
+                                        getTitlesWidget: (value, meta) {
+                                          return Text(
+                                            value.toStringAsFixed(0),
+                                            style: TextStyle(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        },
+                                        interval: (maxY - minY) / 3,
                                       ),
                                     ),
                                   ),
@@ -140,14 +193,36 @@ class _SignalsPageState extends State<SignalsPage> {
                                       spots: buySpots,
                                       barWidth: 0,
                                       color: Colors.green,
-                                      dotData: FlDotData(show: true),
+                                      dotData: FlDotData(
+                                        show: true,
+                                        getDotPainter:
+                                            (spot, percent, barData, index) =>
+                                                FlDotCirclePainter(
+                                          radius: 7,
+                                          color: Colors.green,
+                                        ),
+                                      ),
                                       isStrokeCapRound: true,
                                     ),
                                     LineChartBarData(
                                       spots: sellSpots,
                                       barWidth: 0,
                                       color: Colors.red,
-                                      dotData: FlDotData(show: true),
+                                      dotData: FlDotData(
+                                        show: true,
+                                        getDotPainter:
+                                            (spot, percent, barData, index) =>
+                                                FlDotCirclePainter(
+                                          radius: 7,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    LineChartBarData(
+                                      spots: holdSpots,
+                                      show: false,
+                                      barWidth: 0,
+                                      color: Colors.grey,
                                     ),
                                     LineChartBarData(
                                       spots: emaSpots,

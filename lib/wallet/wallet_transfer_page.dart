@@ -13,11 +13,13 @@ class WalletTransferPage extends HookWidget {
   const WalletTransferPage({
     Key? key,
     required this.title,
-    required this.network,
+    this.network = NetworkType.Ethereum,
+    this.isWallet = true,
   }) : super(key: key);
 
   final String title;
   final NetworkType network;
+  final bool isWallet;
 
   @override
   Widget build(BuildContext context) {

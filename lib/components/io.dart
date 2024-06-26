@@ -3,9 +3,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:socialswap/components/navBar.dart';
+import 'package:socialswap/pages/emailverification.dart';
 import 'package:socialswap/pages/log_in.dart';
 import 'package:socialswap/service/auth.dart';
-import 'package:socialswap/wallet/wallet_main.dart';
 
 class IO extends StatefulWidget {
   const IO({Key? key}) : super(key: key);
@@ -32,7 +32,11 @@ class _IOState extends State<IO> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   if (snapshot.hasData) {
-                    return NavBar();
+                    if (snapshot.data.emailVerified) {
+                      return NavBar();
+                    } else {
+                      return EmailVerificationPage();
+                    }
                   } else {
                     return LogIn();
                   }

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:socialswap/pages/home.dart';
 import 'package:socialswap/wallet/wallet_main.dart';
 
-
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
 
@@ -17,13 +16,23 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   int _currentIndex = 0;
-  List<Widget> pages = [
-    MainHome(),
-    CryptoNewsList(),
-    Home(),
-    ViewProfile(),
-    MainApp(),
-  ];
+  late List<Widget> pages;
+  void navigateToMainApp() {
+    setState(() {
+      _currentIndex = 4; // Navigate to MainApp (index 4 in pages list)
+    });
+  }
+
+  void initState() {
+    super.initState();
+    pages = [
+      MainHome(navigateToMainApp: () => navigateToMainApp()),
+      CryptoNewsList(),
+      Home(),
+      ViewProfile(),
+      MainApp(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +51,6 @@ class _NavBarState extends State<NavBar> {
           onTap: ((value) {
             setState(() {
               _currentIndex = value;
-              
             });
           }),
           items: [

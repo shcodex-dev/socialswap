@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:socialswap/components/item2.dart';
 import 'package:socialswap/models/coin.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class Recommend extends StatefulWidget {
   const Recommend({super.key});
@@ -136,9 +140,8 @@ class _RecommendState extends State<Recommend> {
     const url =
         'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
 
-    setState(() {
-      isRefreshing = true;
-    });
+    await loadFromFile();
+
     var response = await http.get(Uri.parse(url), headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -148,12 +151,46 @@ class _RecommendState extends State<Recommend> {
     });
     if (response.statusCode == 200) {
       var x = response.body;
+      saveToFile(response.body);
       coinMarketList = coinFromJson(x);
       setState(() {
         coinMarket = coinMarketList;
       });
     } else {
       print(response.statusCode);
+      await loadFromFile();
     }
+  }
+
+  Future<void> loadFromFile() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = path.join(directory.path, 'recommend.json');
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final fileContent = await file.readAsString();
+        coinMarketList = coinFromJson(fileContent);
+        setState(() {
+          print(
+              'REad from Local data file found++++++++++++++++++++++++++++++++++');
+          coinMarket = coinMarketList;
+          isRefreshing = false;
+        });
+      } else {
+        print("File does not exist");
+        isRefreshing = true;
+      }
+    } catch (error) {
+      isRefreshing = true;
+    }
+  }
+
+  Future<void> saveToFile(String data) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = path.join(directory.path, 'recommend.json');
+    final file = File(filePath);
+    await file.writeAsString(data);
+    print('Save to Local data file found++++++++++++++++++++++++++++++++++');
   }
 }

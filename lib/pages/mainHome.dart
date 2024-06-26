@@ -1,36 +1,44 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables, body_might_complete_normally_nullable, prefer_is_empty, sized_box_for_whitespace, avoid_print
-
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:socialswap/components/item.dart';
+import 'package:socialswap/components/navBar.dart';
 import 'package:socialswap/models/coin.dart';
 import 'package:socialswap/pages/Recommendpage.dart';
 import 'package:socialswap/pages/prediction.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:socialswap/wallet/wallet_main.dart';
+import 'package:path/path.dart' as path;
 
 class MainHome extends StatefulWidget {
-  const MainHome({super.key});
+  final VoidCallback navigateToMainApp;
+  const MainHome({Key? key, required this.navigateToMainApp}) : super(key: key);
 
   @override
   State<MainHome> createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<MainHome> {
-  @override
-  void initState() {
-    getCoinMarket();
-    super.initState();
-  }
-
   // coin market list
   List? coinMarket = [];
   var coinMarketList;
+  String? chk;
+  String balance = "0.0";
+  double walletMoney = 0.0;
 
-  String chk = '';
-  var chkLogin = -1;
+  Future<void> getassets() async {
+    chk = (await SharedPreferenceHelper().getStoreCheck());
+    balance = (await SharedPreferenceHelper().getWalletBalance())!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getassets();
+    getCoinMarket();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,39 +103,58 @@ class _MainHomeState extends State<MainHome> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  chk == "false"  || chkLogin == -1
-                      ? IconButton(
-                          icon: const Icon(Icons.add, size: 50.0,), onPressed: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainApp()));
-                          })
+                  chk == "false"
+                      ? Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.add,
+                                size: 50.0,
+                                color: Color.fromARGB(255, 45, 45, 45),
+                              ),
+                              onPressed: () async {
+                                widget.navigateToMainApp();
+                              },
+                            ),
+                            Text(
+                              "Create Wallet",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 45, 45, 45)),
+                            )
+                          ],
+                        )
                       : Text(
-                          '\$ 0.00',
+                          '\$ ' + walletMoney.toString(),
                           style: TextStyle(fontSize: 35),
                         ),
-                  Container(
-                    padding: EdgeInsets.all(myWidth * 0.02),
-                    width: myWidth * 0.1,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.5)),
-                    child: GestureDetector(
-                      onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignalsPage()))
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 2, right: 2),
-                        child: Image.asset(
-                          'assets/icons/5.1.png',
-                          height: myHeight * 0.05,
+                  Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(myWidth * 0.02),
+                        width: myWidth * 0.1,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.5)),
+                        child: GestureDetector(
+                          onTap: () => {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignalsPage()))
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 2, right: 2),
+                            child: Image.asset(
+                              'assets/icons/5.1.png',
+                              height: myHeight * 0.05,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Text("Predictions"),
+                    ],
                   )
                 ],
               ),
@@ -172,37 +199,42 @@ class _MainHomeState extends State<MainHome> {
                   SizedBox(
                     height: myHeight * 0.02,
                   ),
-                  Container(
-                    height: myHeight * 0.48,
-                    child: isRefreshing == true
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Color.fromARGB(255, 81, 81, 81),
-                            ),
-                          )
-                        : coinMarket == null || coinMarket!.length == 0
-                            ? Padding(
-                                padding: EdgeInsets.all(myHeight * 0.06),
-                                child: Center(
-                                  child: Text(
-                                    'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
-                                    style: TextStyle(fontSize: 16),
+                  chk == "false"
+                      ? Container(
+                          height: myHeight * 0.48,
+                        )
+                      : Container(
+                          height: myHeight * 0.48,
+                          child: isRefreshing == true
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color.fromARGB(255, 81, 81, 81),
                                   ),
-                                ),
-                              )
-                            : SingleChildScrollView(
-                                child: ListView.builder(
-                                  itemCount: 3,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return Item(
-                                      item: coinMarket![index],
-                                    );
-                                  },
-                                ),
-                              ),
-                  ),
+                                )
+                              : coinMarket == null || coinMarket!.length == 0
+                                  ? Padding(
+                                      padding: EdgeInsets.all(myHeight * 0.06),
+                                      child: Center(
+                                        child: Text(
+                                          'Attention this Api is free, so you cannot send multiple requests per second, please wait and try again later.',
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    )
+                                  : SingleChildScrollView(
+                                      child: ListView.builder(
+                                        itemCount: 1,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          return Item(
+                                            item: coinMarket![index],
+                                            bal: balance,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                        ),
                 ],
               ),
             )
@@ -215,18 +247,11 @@ class _MainHomeState extends State<MainHome> {
   bool isRefreshing = true;
 
   Future<List<Coin>?> getCoinMarket() async {
-    chk = (await SharedPreferenceHelper().getStoreCheck())!;
-    chkLogin = (await SharedPreferenceHelper().getWalletBalance())! as int;
-
-    print(chkLogin);
-
-
     const url =
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&sparkline=true';
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ethereum&sparkline=true';
 
-    setState(() {
-      isRefreshing = true;
-    });
+    await loadFromFile();
+
     var response = await http.get(Uri.parse(url), headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -236,9 +261,9 @@ class _MainHomeState extends State<MainHome> {
       isRefreshing = false;
     });
 
-
     if (response.statusCode == 200) {
       var x = response.body;
+      saveToFile(response.body);
 
       try {
         coinMarketList = coinFromJson(x);
@@ -248,9 +273,44 @@ class _MainHomeState extends State<MainHome> {
 
       setState(() {
         coinMarket = coinMarketList;
+        walletMoney = coinMarketList![0].currentPrice * double.parse(balance);
       });
     } else {
       print(response.statusCode);
+      await loadFromFile();
     }
+  }
+
+  Future<void> loadFromFile() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = path.join(directory.path, 'balance.json');
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final fileContent = await file.readAsString();
+        coinMarketList = coinFromJson(fileContent);
+        setState(() {
+          print(
+              'REad from Local data file found++++++++++++++++++++++++++++++++++');
+          coinMarket = coinMarketList;
+          walletMoney = coinMarketList![0].currentPrice * double.parse(balance);
+          isRefreshing = false;
+        });
+      } else {
+        print("File does not exist");
+        isRefreshing = true;
+      }
+    } catch (error) {
+      isRefreshing = true;
+    }
+  }
+
+  Future<void> saveToFile(String data) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = path.join(directory.path, 'balance.json');
+    final file = File(filePath);
+    await file.writeAsString(data);
+    print('Save to Local data file found++++++++++++++++++++++++++++++++++');
   }
 }

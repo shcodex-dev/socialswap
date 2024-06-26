@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:socialswap/models/chartModel.dart';
 
@@ -208,15 +209,20 @@ class _SelectCoinState extends State<SelectCoin> {
                               trackballBehavior: trackballBehavior,
                               zoomPanBehavior: ZoomPanBehavior(
                                   enablePinching: true, zoomMode: ZoomMode.x),
+                              primaryXAxis: DateTimeAxis(
+                                dateFormat: DateFormat('yyyy-MM-dd HH:mm:ss'),
+                                intervalType: DateTimeIntervalType.auto,
+                              ),
                               series: <CandleSeries>[
-                                CandleSeries<ChartModel, int>(
+                                CandleSeries<ChartModel, DateTime>(
                                     enableSolidCandles: true,
                                     enableTooltip: true,
                                     bullColor: Colors.green,
                                     bearColor: Colors.red,
                                     dataSource: itemChart!,
                                     xValueMapper: (ChartModel sales, _) =>
-                                        sales.time,
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            sales.time),
                                     lowValueMapper: (ChartModel sales, _) =>
                                         sales.low,
                                     highValueMapper: (ChartModel sales, _) =>

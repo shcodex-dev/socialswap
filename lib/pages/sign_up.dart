@@ -1,6 +1,5 @@
-import 'package:socialswap/components/navBar.dart';
+import 'package:socialswap/pages/emailverification.dart';
 import 'package:socialswap/pages/log_in.dart';
-import 'package:socialswap/components/reuseable_widgets.dart';
 import 'package:socialswap/service/database.dart';
 import 'package:socialswap/service/shared_pref.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:random_string/random_string.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -28,8 +28,7 @@ class SignUpState extends State<SignUp> {
   Future<void> pickImage() async {
     try {
       final XFile? pickedFile = await imagePicker.pickImage(
-        source: ImageSource
-            .gallery, // You can also use ImageSource.camera for taking a new photo
+        source: ImageSource.gallery,
       );
 
       if (pickedFile != null) {
@@ -59,7 +58,7 @@ class SignUpState extends State<SignUp> {
         if (email.startsWith("www")) {
           email = email.replaceFirst("www.", "");
         }
-        await FirebaseAuth.instance
+        UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
         String Id = randomAlphaNumeric(10);
@@ -72,7 +71,15 @@ class SignUpState extends State<SignUp> {
         if (image != null) {
           imageUrl = await db.uploadImage(
             bytes: image!.bytes,
-            // extension: _result!.files.first.extension!,
+            id: FirebaseAuth.instance.currentUser!.uid.toString(),
+            folder: 'profilePics',
+          );
+        } else {
+          final ByteData assetImageData =
+              await rootBundle.load('assets/image/person.png');
+          final Uint8List assetImageBytes = assetImageData.buffer.asUint8List();
+          imageUrl = await db.uploadImage(
+            bytes: assetImageBytes,
             id: FirebaseAuth.instance.currentUser!.uid.toString(),
             folder: 'profilePics',
           );
@@ -84,6 +91,8 @@ class SignUpState extends State<SignUp> {
           "SearchKey": firstletter,
           "Photo": imageUrl,
           "Id": Id,
+          "privateKey": "",
+          "address": "",
         };
         await DatabaseMethods().addUserDetails(userInfoMap, Id);
         await SharedPreferenceHelper().saveUserId(Id);
@@ -104,8 +113,14 @@ class SignUpState extends State<SignUp> {
             ),
           ),
         );
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => NavBar()));
+        User? userInfo = userCredential.user;
+        if (userInfo != null && !userInfo.emailVerified) {
+          await userInfo.sendEmailVerification();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => EmailVerificationPage()),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -251,34 +266,205 @@ class SignUpState extends State<SignUp> {
                                   ),
                                 ),
 
-                                // Label and Input field for Email //
-                                resuedTextField('Name', Icons.person_outlined,
-                                    false, _nameController),
+                                // Label and Input field for Name //m
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Name',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10.0),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.0, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: TextFormField(
+                                          controller: _nameController,
+                                          validator: (value) {
+                                            final numberRegExp = RegExp(r'\d');
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please Enter Name";
+                                            } else if (numberRegExp
+                                                .hasMatch(value)) {
+                                              return "Name should not contain numbers";
+                                            }
+                                            return null;
+                                          },
+                                          enableSuggestions: true,
+                                          autocorrect: true,
+                                          style: TextStyle(fontSize: 18.0),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            prefixIcon: Icon(
+                                              Icons.person_outlined,
+                                              color: Color(0xFF7f30fe),
+                                            ),
+                                          ),
+                                          keyboardType:
+                                              TextInputType.emailAddress),
+                                    ),
+                                  ],
+                                ),
+
                                 SizedBox(
                                   height: 10.0,
                                 ),
                                 // Label and Input field for Email //
-                                resuedTextField("Email", Icons.mail_outline,
-                                    false, _emailController),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Email",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10.0),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.0, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: TextFormField(
+                                          controller: _emailController,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please Enter Email";
+                                            } else if (!value
+                                                .endsWith("@gmail.com")) {
+                                              return "Please only Enter Gmail Address";
+                                            }
+                                            return null;
+                                          },
+                                          autocorrect: true,
+                                          style: TextStyle(fontSize: 18.0),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            prefixIcon: Icon(
+                                              Icons.mail_outline,
+                                              color: Color(0xFF7f30fe),
+                                            ),
+                                          ),
+                                          keyboardType:
+                                              TextInputType.emailAddress),
+                                    ),
+                                  ],
+                                ),
                                 SizedBox(
                                   height: 10.0,
                                 ),
                                 // Label and Input field for Password //
-                                resuedTextField(
-                                    "Password",
-                                    Icons.password_outlined,
-                                    true,
-                                    _passwordController),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Password",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10.0),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.0, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: TextFormField(
+                                          controller: _passwordController,
+                                          validator: (value) {
+                                            final numberRegExp = RegExp(r'\d');
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please Enter Password";
+                                            } else if (!numberRegExp
+                                                .hasMatch(value)) {
+                                              return "Password should atleast contain one numbers";
+                                            } else if (value.length < 8) {
+                                              return "Password should be more then 8 Character long";
+                                            }
+                                            return null;
+                                          },
+                                          obscureText: true,
+                                          enableSuggestions: false,
+                                          autocorrect: false,
+                                          style: TextStyle(fontSize: 18.0),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            prefixIcon: Icon(
+                                              Icons.password_outlined,
+                                              color: Color(0xFF7f30fe),
+                                            ),
+                                          ),
+                                          keyboardType:
+                                              TextInputType.visiblePassword),
+                                    ),
+                                  ],
+                                ),
                                 SizedBox(
                                   height: 10.0,
                                 ),
-                                // Label and Input field for Password //
-                                resuedTextField(
-                                    "Confirm Password",
-                                    Icons.password_outlined,
-                                    true,
-                                    _confirmPasswordController),
-                                // SignUp Button //
+                                // Label and Input field for Confirm Password //
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Confirm Password",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(height: 10.0),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10.0),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1.0, color: Colors.black),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: TextFormField(
+                                          controller:
+                                              _confirmPasswordController,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please Enter Confirm Password";
+                                            }
+                                            return null;
+                                          },
+                                          obscureText: true,
+                                          enableSuggestions: false,
+                                          autocorrect: false,
+                                          style: TextStyle(fontSize: 18.0),
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            prefixIcon: Icon(
+                                              Icons.password_outlined,
+                                              color: Color(0xFF7f30fe),
+                                            ),
+                                          ),
+                                          keyboardType: true
+                                              ? TextInputType.visiblePassword
+                                              : TextInputType.emailAddress),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -295,8 +481,8 @@ class SignUpState extends State<SignUp> {
                             confirmPassword = _confirmPasswordController.text;
                             btnState = true;
                           });
+                          registration();
                         }
-                        registration();
                       },
                       child: btnState
                           ? SpinKitCircle(

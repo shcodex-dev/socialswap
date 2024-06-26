@@ -23,33 +23,6 @@ class MainMenu extends StatelessWidget {
       child: ListView(
         children: <Widget>[
           ListTile(
-            title: const Text('Get tokens'),
-            subtitle: const Text('Claim some test tokens'),
-            trailing: const Icon(WalletIcons.gem, color: Colors.blue),
-            onTap: () async {
-              final url = Uri.parse(
-                  'https://faucet.clempe.dev?address=$address&network=${network.name.toLowerCase()}');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              } else {
-                throw 'Could not launch $url';
-              }
-            },
-          ),
-          ListTile(
-            title: Text('Get ${network.config.symbol}'),
-            subtitle: Text('Claim some test ${network.config.symbol}'),
-            trailing: Icon(network.config.icon, color: Colors.black),
-            onTap: () async {
-              final url = Uri.parse(network.config.faucetUrl);
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              } else {
-                throw 'Could not launch $url';
-              }
-            },
-          ),
-          ListTile(
               title: const Text('Private key'),
               subtitle: const Text('Reveal your private key'),
               trailing: const Icon(

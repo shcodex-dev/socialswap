@@ -6,15 +6,15 @@ class SharedPreferenceHelper {
   static String userEmailKey = "USEREMAILKEY";
   static String userPicKey = "USERPICKEY";
   static String displaynameKey = "USERDISPLAYNAME";
-  
+
   // user wallet share pref //
   static String userAddressKey = "USERADDRESSKEY";
   static String userPrivateKey = "USERPRIVATEKEY";
 
-  static String storeCheckKey = "STORECHECKKEY";
+  static String storeCheckKey = "false";
 
   // wallet balance //
-  static String walletBalanceKey = "WALLETBALANCEKEY";
+  static String walletBalanceKey = "0.0";
 
   // --------------------------------- save user sharef pref ---------------------------------//
 
@@ -43,8 +43,6 @@ class SharedPreferenceHelper {
     return prefs.setString(displaynameKey, getUserDisplayName);
   }
 
-
-
   // user wallet shared pref //
   Future<bool> saveUserAddress(String address) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -66,7 +64,6 @@ class SharedPreferenceHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(walletBalanceKey, balance);
   }
-
 
   // --------------------------------- get user sharef pref ---------------------------------//
   Future<String?> getUserId() async {
